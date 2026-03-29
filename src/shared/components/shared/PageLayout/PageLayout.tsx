@@ -2,9 +2,6 @@
 
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-
-gsap.registerPlugin(ScrollTrigger)
 
 interface PageLayoutProps {
   children: React.ReactNode
@@ -22,17 +19,23 @@ export function PageLayout({ children }: PageLayoutProps) {
     if (!isClient || !containerRef.current) return
 
     const ctx = gsap.context(() => {
-      // Parallax background elements
-      gsap.to(".parallax-circle", {
-        y: -100,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1,
-        },
-      })
+      // Simple parallax without ScrollTrigger to avoid removeChild errors
+      const circles = containerRef.current?.querySelectorAll(".parallax-circle")
+      if (!circles || circles.length === 0) return
+
+      const handleScroll = () => {
+        const scrollY = window.scrollY
+        circles.forEach((circle, i) => {
+          const speed = 0.05 + i * 0.02
+          gsap.set(circle, { y: scrollY * speed })
+        })
+      }
+
+      window.addEventListener("scroll", handleScroll, { passive: true })
+
+      return () => {
+        window.removeEventListener("scroll", handleScroll)
+      }
     }, containerRef)
 
     return () => ctx.revert()
@@ -41,10 +44,10 @@ export function PageLayout({ children }: PageLayoutProps) {
   return (
     <main
       ref={containerRef}
-      className="min-h-screen pt-20 bg-background overflow-hidden relative"
+      className="min-h-screen pt-20 bg-background relative"
     >
       {/* Animated Background Elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div
           className="parallax-circle absolute -top-40 -right-40 w-80 h-80 rounded-full opacity-10"
           style={{
@@ -77,7 +80,9 @@ export function PageLayout({ children }: PageLayoutProps) {
         />
       </div>
 
-      <div className="container mx-auto px-4 py-16 relative z-10">{children}</div>
+      <div className="container mx-auto px-4 py-16 relative z-10">
+        {children}
+      </div>
     </main>
   )
 }

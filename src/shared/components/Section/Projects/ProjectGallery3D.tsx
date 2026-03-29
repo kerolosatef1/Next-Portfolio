@@ -170,28 +170,31 @@ export function ProjectGallery3D({ activeProject, allProjects }: ProjectGallery3
   ]
 
   // Floating images positions
-  const floatingPositions = [
-    { left: "5%", top: "10%", rotate: -15, size: 80, delay: 0 },
-    { left: "85%", top: "15%", rotate: 12, size: 100, delay: 0.5 },
-    { left: "10%", top: "70%", rotate: -8, size: 90, delay: 1 },
-    { left: "80%", top: "65%", rotate: 20, size: 70, delay: 1.5 },
-    { left: "2%", top: "40%", rotate: -25, size: 60, delay: 2 },
-    { left: "90%", top: "40%", rotate: 15, size: 85, delay: 2.5 },
-    { left: "15%", top: "85%", rotate: 5, size: 75, delay: 3 },
-    { left: "75%", top: "80%", rotate: -10, size: 65, delay: 3.5 },
-    { left: "25%", top: "5%", rotate: 8, size: 55, delay: 4 },
-    { left: "65%", top: "8%", rotate: -5, size: 70, delay: 4.5 },
-    { left: "0%", top: "25%", rotate: 18, size: 50, delay: 5 },
-    { left: "95%", top: "55%", rotate: -12, size: 60, delay: 5.5 },
-  ]
+  // في ProjectGallery3D.tsx - غير الجزء ده:
 
-  // Get floating images from shuffled array
-  const floatingImages = useMemo(() => {
-    return floatingPositions.map((pos, index) => ({
-      ...pos,
-      ...shuffledImages[index % shuffledImages.length],
-    }))
-  }, [shuffledImages, floatingPositions])
+// Move floatingPositions OUTSIDE the component (it's static data)
+const FLOATING_POSITIONS = [
+  { left: "5%", top: "10%", rotate: -15, size: 80, delay: 0 },
+  { left: "85%", top: "15%", rotate: 12, size: 100, delay: 0.5 },
+  { left: "10%", top: "70%", rotate: -8, size: 90, delay: 1 },
+  { left: "80%", top: "65%", rotate: 20, size: 70, delay: 1.5 },
+  { left: "2%", top: "40%", rotate: -25, size: 60, delay: 2 },
+  { left: "90%", top: "40%", rotate: 15, size: 85, delay: 2.5 },
+  { left: "15%", top: "85%", rotate: 5, size: 75, delay: 3 },
+  { left: "75%", top: "80%", rotate: -10, size: 65, delay: 3.5 },
+  { left: "25%", top: "5%", rotate: 8, size: 55, delay: 4 },
+  { left: "65%", top: "8%", rotate: -5, size: 70, delay: 4.5 },
+  { left: "0%", top: "25%", rotate: 18, size: 50, delay: 5 },
+  { left: "95%", top: "55%", rotate: -12, size: 60, delay: 5.5 },
+] as const
+
+// Then inside the component, fix the useMemo:
+const floatingImages = useMemo(() => {
+  return FLOATING_POSITIONS.map((pos, index) => ({
+    ...pos,
+    ...shuffledImages[index % shuffledImages.length],
+  }))
+}, [shuffledImages])
 
   return (
     <div

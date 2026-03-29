@@ -1,15 +1,12 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import { useTranslations } from "next-intl"
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Briefcase, FolderGit2, Users } from "lucide-react"
+import { Briefcase, FolderGit2 } from "lucide-react"
 import { Container } from "@/shared/components/shared/Container/Container"
 import { SectionHeading } from "@/shared/components/shared/SectionHeading/SectionHeading"
 import { siteConfig } from "@/shared/config/site"
-
-gsap.registerPlugin(ScrollTrigger)
+import { useGsapAnimation } from "@/shared/hooks/useGsap"
 
 const stats = [
   {
@@ -24,49 +21,34 @@ const stats = [
     suffix: "+",
     icon: FolderGit2,
   },
-  
 ]
 
 export function About() {
   const t = useTranslations("about")
   const sectionRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".about-content",
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      )
-
-      gsap.fromTo(
-        ".stat-card",
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          stagger: 0.15,
-          scrollTrigger: {
-            trigger: ".stats-container",
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      )
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
+  useGsapAnimation(sectionRef, [
+    {
+      target: "[data-gsap-fade-up]",
+      from: { opacity: 0, y: 30 },
+      to: { opacity: 1, y: 0, duration: 0.8 },
+      scrollTrigger: {
+        trigger: "[data-gsap-fade-up]",
+        start: "top 80%",
+        toggleActions: "play none none reverse",
+      },
+    },
+    {
+      target: "[data-stat]",
+      from: { opacity: 0, y: 30 },
+      to: { opacity: 1, y: 0, duration: 0.6, stagger: 0.15 },
+      scrollTrigger: {
+        trigger: "[data-stats]",
+        start: "top 85%",
+        toggleActions: "play none none reverse",
+      },
+    },
+  ])
 
   return (
     <section id="about" ref={sectionRef} className="py-20 md:py-32">
@@ -74,10 +56,11 @@ export function About() {
         <SectionHeading title={t("title")} subtitle={t("subtitle")} />
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Content */}
-          <div className="about-content space-y-6">
+          <div data-gsap-fade-up className="space-y-6">
             <p className="text-lg text-muted-foreground leading-relaxed">
-              {t("description", { years: siteConfig.creator.yearsOfExperience })}
+              {t("description", {
+                years: siteConfig.creator.yearsOfExperience,
+              })}
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -94,12 +77,13 @@ export function About() {
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="stats-container grid grid-cols-3 gap-4">
+          <div data-stats className="grid grid-cols-2 gap-4">
             {stats.map((stat) => (
               <div
                 key={stat.key}
-                className="stat-card group p-6 bg-card rounded-2xl border border-border hover:border-emerald-500/50 transition-colors text-center"
+                data-stat
+                data-gsap-fade-up
+                className="group p-6 bg-card rounded-2xl border border-border hover:border-emerald-500/50 transition-colors text-center"
               >
                 <div className="inline-flex items-center justify-center w-12 h-12 mb-4 bg-emerald-500/10 rounded-xl group-hover:bg-emerald-500/20 transition-colors">
                   <stat.icon className="h-6 w-6 text-emerald-500" />

@@ -34,7 +34,7 @@ import {
   SiVercel,
   SiFigma,
   SiSwagger,
-  SiPostman
+  SiPostman,
 } from "react-icons/si"
 import {
   TbApi,
@@ -79,7 +79,6 @@ const skillsRow2: Skill[] = [
   { name: "Bootstrap", icon: SiBootstrap, color: "#7952b3" },
   { name: "Material UI", icon: SiMui, color: "#007fff" },
   { name: "GSAP", icon: SiGreensock, color: "#88ce02" },
-
 ]
 
 // Row 3 - UI & More
@@ -94,10 +93,8 @@ const skillsRow3: Skill[] = [
   { name: "Git", icon: SiGit, color: "#f05032" },
   { name: "Postman", icon: SiPostman, color: "#EF5B25" },
   { name: "Swagger", icon: SiSwagger, color: "#00FF00" },
-
-
-
 ]
+
 interface SkillsProps {
   locale: string
 }
@@ -121,14 +118,13 @@ export function Skills({ locale }: SkillsProps) {
     (
       element: HTMLDivElement | null,
       direction: "left" | "right",
-      speed: number // pixels per second
+      speed: number
     ): gsap.core.Tween | null => {
       if (!element) return null
 
       const content = element.querySelector(".marquee-content") as HTMLElement
       if (!content) return null
 
-      // Get the width of ONE set of skills (we have 2 sets)
       const singleSetWidth = content.scrollWidth / 2
 
       const actualDirection = isArabic
@@ -137,14 +133,11 @@ export function Skills({ locale }: SkillsProps) {
           : "left"
         : direction
 
-      // Calculate duration based on speed
       const duration = singleSetWidth / speed
 
-      // Kill any existing animation
       gsap.killTweensOf(content)
 
       if (actualDirection === "left") {
-        // Moving left: start at 0, end at -singleSetWidth
         gsap.set(content, { x: 0 })
 
         const tween = gsap.to(content, {
@@ -154,12 +147,10 @@ export function Skills({ locale }: SkillsProps) {
           repeat: -1,
           force3D: true,
           onRepeat: () => {
-            // Reset to 0 instantly when reaching the end
             gsap.set(content, { x: 0 })
           },
         })
 
-        // Hover events
         const pause = () => tween.pause()
         const resume = () => tween.resume()
         element.addEventListener("mouseenter", pause)
@@ -171,7 +162,6 @@ export function Skills({ locale }: SkillsProps) {
 
         return tween
       } else {
-        // Moving right: start at -singleSetWidth, end at 0
         gsap.set(content, { x: -singleSetWidth })
 
         const tween = gsap.to(content, {
@@ -181,12 +171,10 @@ export function Skills({ locale }: SkillsProps) {
           repeat: -1,
           force3D: true,
           onRepeat: () => {
-            // Reset to -singleSetWidth instantly when reaching 0
             gsap.set(content, { x: -singleSetWidth })
           },
         })
 
-        // Hover events
         const pause = () => tween.pause()
         const resume = () => tween.resume()
         element.addEventListener("mouseenter", pause)
@@ -202,39 +190,46 @@ export function Skills({ locale }: SkillsProps) {
     [isArabic]
   )
 
-  // Initial animations
+  // Initial animations - NO ScrollTrigger here to avoid the removeChild error
   useEffect(() => {
     if (!isClient || !containerRef.current) return
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".skills-title",
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
-      )
+    // Wait for next frame so DOM elements are definitely rendered
+    const rafId = requestAnimationFrame(() => {
+      const ctx = gsap.context(() => {
+        // Use refs or direct children instead of class selectors
+        // This avoids "target not found" warnings
+        const titleEl = containerRef.current?.querySelector("[data-animate='title']")
+        const rowEls = containerRef.current?.querySelectorAll("[data-animate='row']")
 
-      gsap.fromTo(
-        ".skills-row",
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.8, stagger: 0.2, ease: "power2.out", delay: 0.3 }
-      )
-
-      gsap.fromTo(
-        ".stat-card",
-        { opacity: 0, y: 50, scale: 0.9 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: "back.out(1.7)",
-          delay: 0.8,
+        if (titleEl) {
+          gsap.fromTo(
+            titleEl,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+          )
         }
-      )
-    }, containerRef)
 
-    return () => ctx.revert()
+        if (rowEls && rowEls.length > 0) {
+          gsap.fromTo(
+            rowEls,
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              stagger: 0.2,
+              ease: "power2.out",
+              delay: 0.3,
+            }
+          )
+        }
+      }, containerRef)
+
+      return () => ctx.revert()
+    })
+
+    return () => cancelAnimationFrame(rafId)
   }, [isClient])
 
   // Marquee animations
@@ -251,7 +246,6 @@ export function Skills({ locale }: SkillsProps) {
       })
       tweensRef.current = []
 
-      // Setup new tweens with speed (pixels per second)
       const tween1 = setupMarquee(row1Ref.current, "right", 50)
       const tween2 = setupMarquee(row2Ref.current, "left", 40)
       const tween3 = setupMarquee(row3Ref.current, "right", 45)
@@ -259,7 +253,7 @@ export function Skills({ locale }: SkillsProps) {
       if (tween1) tweensRef.current.push(tween1)
       if (tween2) tweensRef.current.push(tween2)
       if (tween3) tweensRef.current.push(tween3)
-    }, 200)
+    }, 300)
 
     return () => {
       clearTimeout(timer)
@@ -284,7 +278,8 @@ export function Skills({ locale }: SkillsProps) {
     }
 
     document.addEventListener("visibilitychange", handleVisibilityChange)
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
   }, [])
 
   // Labels
@@ -343,8 +338,13 @@ export function Skills({ locale }: SkillsProps) {
           "shadow-sm hover:shadow-md hover:shadow-emerald-500/10"
         )}
       >
-        <Icon className="w-5 h-5 flex-shrink-0" style={{ color: skill.color }} />
-        <span className="text-sm font-medium text-foreground">{skill.name}</span>
+        <Icon
+          className="w-5 h-5 flex-shrink-0"
+          style={{ color: skill.color || undefined }}
+        />
+        <span className="text-sm font-medium text-foreground">
+          {skill.name}
+        </span>
       </div>
     )
   }
@@ -356,11 +356,14 @@ export function Skills({ locale }: SkillsProps) {
     skills: Skill[]
     rowRef: React.RefObject<HTMLDivElement | null>
   }) => {
-    // Duplicate TWICE for seamless loop
     const duplicatedSkills = [...skills, ...skills]
 
     return (
-      <div ref={rowRef} className="skills-row relative overflow-hidden py-3">
+      <div
+        ref={rowRef}
+        data-animate="row"
+        className="relative overflow-hidden py-3"
+      >
         {/* Gradient masks */}
         <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
@@ -374,19 +377,16 @@ export function Skills({ locale }: SkillsProps) {
     )
   }
 
-  const totalSkills = skillsRow1.length + skillsRow2.length + skillsRow3.length
-
-  const stats = [
-    { value: totalSkills, label: t("technologies"), showPlus: true },
-    { value: 3, label: t("yearsExperience"), showPlus: true },
-    { value: 15, label: t("projects"), showPlus: true },
-    { value: 100, label: t("commitment"), showPlus: false },
-  ]
-
   return (
     <PageLayout>
       <div ref={containerRef} className="relative">
-        <PageHeader title={t("title")} subtitle={t("subtitle")} locale={locale} />
+        <div data-animate="title">
+          <PageHeader
+            title={t("title")}
+            subtitle={t("subtitle")}
+            locale={locale}
+          />
+        </div>
 
         <div className="space-y-4 md:space-y-6 -mx-4 md:-mx-8 lg:-mx-16">
           <MarqueeRow skills={skillsRow1} rowRef={row1Ref} />

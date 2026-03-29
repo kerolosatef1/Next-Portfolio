@@ -2,6 +2,89 @@
 @import "tw-animate-css";
 
 /* ===== CSS Variables ===== */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Add this to your globals.css - paste at the END of the file */
+
+/* ============================================
+   GSAP Pre-animation States
+   Hide elements before GSAP takes over.
+   This prevents the "flash" where content appears
+   without animation during SSR → hydration.
+   ============================================ */
+
+/* Hero elements - hidden until GSAP animates them */
+.hero-greeting,
+.hero-title-role,
+.hero-social {
+  opacity: 0;
+}
+
+/* Elements that will be animated by GSAP via data attributes */
+[data-gsap-fade] {
+  opacity: 0;
+}
+
+[data-gsap-fade-up] {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+[data-gsap-fade-left] {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+[data-gsap-fade-right] {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+/* RTL support */
+[dir="rtl"] [data-gsap-fade-left] {
+  transform: translateX(50px);
+}
+
+[dir="rtl"] [data-gsap-fade-right] {
+  transform: translateX(-50px);
+}
+
+/* Fallback: if JS fails or takes too long, show content after 3s */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-greeting,
+  .hero-title-role,
+  .hero-social,
+  [data-gsap-fade],
+  [data-gsap-fade-up],
+  [data-gsap-fade-left],
+  [data-gsap-fade-right] {
+    animation: gsap-fallback-show 0s 3s forwards;
+  }
+}
+
+@keyframes gsap-fallback-show {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Users who prefer reduced motion - show everything immediately */
+@media (prefers-reduced-motion: reduce) {
+  .hero-greeting,
+  .hero-title-role,
+  .hero-social,
+  [data-gsap-fade],
+  [data-gsap-fade-up],
+  [data-gsap-fade-left],
+  [data-gsap-fade-right] {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
 :root {
   /* Emerald Theme Colors */
   --emerald-50: 236 253 245;

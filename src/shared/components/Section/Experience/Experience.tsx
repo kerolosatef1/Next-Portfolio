@@ -1,15 +1,11 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import { useTranslations, useLocale } from "next-intl"
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Building2, Calendar } from "lucide-react"
 import { Container } from "@/shared/components/shared/Container/Container"
-import { SectionHeading } from "@/shared/components/shared/SectionHeading/SectionHeading"
 import { PageHeader } from "../../shared/PageHeader/PageHeader"
-
-gsap.registerPlugin(ScrollTrigger)
+import { useGsapAnimation } from "@/shared/hooks/useGsap"
 
 const experienceData = [
   {
@@ -30,7 +26,16 @@ const experienceData = [
       "تنفيذ ميزات جديدة باستخدام React و Next.js",
       "تحسين أداء التطبيق بنسبة 40%",
     ],
-    technologies: ["React", "Next.js", "TypeScript","redux","noval state","Shadcn/UI","Next Auth","Chart.js"],
+    technologies: [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "redux",
+      "noval state",
+      "Shadcn/UI",
+      "Next Auth",
+      "Chart.js",
+    ],
   },
   {
     id: "2",
@@ -49,10 +54,22 @@ const experienceData = [
       "تطوير تطبيقات ويب متجاوبة",
       "التعاون مع المصممين لتنفيذ تصميمات UI/UX",
       "صيانة وتحسين قواعد الكود الحالية",
-      " التعامل مع الواجهات الخلفية وال API "
+      " التعامل مع الواجهات الخلفية وال API ",
     ],
-    technologies: ["NEXT.JS","React","TypeScript" ,"JavaScript", "Tailwind css","Sass","Metrial/UI","Shadcn/UI","Chart.js","Next Auth" ,"ISR , SSG , SSR"],
-  }
+    technologies: [
+      "NEXT.JS",
+      "React",
+      "TypeScript",
+      "JavaScript",
+      "Tailwind css",
+      "Sass",
+      "Metrial/UI",
+      "Shadcn/UI",
+      "Chart.js",
+      "Next Auth",
+      "ISR , SSG , SSR",
+    ],
+  },
 ]
 
 export function Experience() {
@@ -61,27 +78,22 @@ export function Experience() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const isArabic = locale === "ar"
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".experience-item",
-        { opacity: 0, x: isArabic ? 50 : -50 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.6,
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      )
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [isArabic])
+  useGsapAnimation(
+    sectionRef,
+    [
+      {
+        target: "[data-experience]",
+        from: { opacity: 0, x: isArabic ? 50 : -50 },
+        to: { opacity: 1, x: 0, duration: 0.6, stagger: 0.2 },
+        scrollTrigger: {
+          trigger: "[data-experience]",
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      },
+    ],
+    [isArabic]
+  )
 
   return (
     <section
@@ -90,31 +102,33 @@ export function Experience() {
       className="py-20 md:py-32 bg-muted/30"
     >
       <Container>
-      <PageHeader title={t("title")} subtitle={t("subtitle")} locale={locale} />
-        
+        <PageHeader
+          title={t("title")}
+          subtitle={t("subtitle")}
+          locale={locale}
+        />
 
         <div className="relative max-w-3xl mx-auto">
-          {/* Timeline Line */}
           <div className="absolute top-0 bottom-0 left-0 md:left-1/2 w-px bg-border md:-translate-x-1/2" />
 
           {experienceData.map((exp, index) => (
             <div
               key={exp.id}
-              className={`experience-item relative flex flex-col md:flex-row gap-8 mb-12 last:mb-0 ${
+              data-experience
+              data-gsap-fade-left={!isArabic || undefined}
+              data-gsap-fade-right={isArabic || undefined}
+              className={`relative flex flex-col md:flex-row gap-8 mb-12 last:mb-0 ${
                 index % 2 === 0 ? "md:flex-row-reverse" : ""
               }`}
             >
-              {/* Timeline Dot */}
               <div className="absolute left-0 md:left-1/2 w-4 h-4 bg-emerald-500 rounded-full border-4 border-background md:-translate-x-1/2 z-10" />
 
-              {/* Content */}
               <div
                 className={`flex-1 ml-8 md:ml-0 ${
                   index % 2 === 0 ? "md:pr-12" : "md:pl-12"
                 }`}
               >
                 <div className="p-6 bg-card rounded-2xl border border-border hover:border-emerald-500/50 transition-colors">
-                  {/* Header */}
                   <div className="flex flex-wrap items-center gap-3 mb-4">
                     <div className="flex items-center gap-2 text-emerald-500">
                       <Building2 className="h-4 w-4" />
@@ -130,12 +144,10 @@ export function Experience() {
                     </div>
                   </div>
 
-                  {/* Position */}
                   <h3 className="text-xl font-semibold text-foreground mb-3">
                     {isArabic ? exp.positionAr : exp.position}
                   </h3>
 
-                  {/* Description */}
                   <ul className="space-y-2 mb-4">
                     {(isArabic ? exp.descriptionAr : exp.description).map(
                       (item, i) => (
@@ -150,7 +162,6 @@ export function Experience() {
                     )}
                   </ul>
 
-                  {/* Technologies */}
                   <div className="flex flex-wrap gap-2">
                     {exp.technologies.map((tech) => (
                       <span
@@ -164,7 +175,6 @@ export function Experience() {
                 </div>
               </div>
 
-              {/* Spacer for alternating layout */}
               <div className="hidden md:block flex-1" />
             </div>
           ))}

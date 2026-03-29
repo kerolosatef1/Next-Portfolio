@@ -8,7 +8,6 @@ import { Footer } from "@/shared/components/Layout/Footer/Footer"
 import { geistSans, geistMono, cairo } from "@/shared/lib/fonts"
 import type { Metadata } from "next"
 
-
 export const metadata: Metadata = {
   title: "Kerolos Atef | Frontend Developer",
   description: "Frontend Developer Portfolio",
@@ -18,6 +17,7 @@ export const metadata: Metadata = {
     apple: "/favicon.svg",
   },
 }
+
 type Props = {
   children: React.ReactNode
   params: Promise<{ locale: string }>
@@ -39,11 +39,17 @@ export default async function LocaleLayout({ children, params }: Props) {
   const isArabic = locale === "ar"
 
   return (
-    <html lang={locale} dir={isArabic ? "rtl" : "ltr"} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={isArabic ? "rtl" : "ltr"}
+      suppressHydrationWarning
+      className="overflow-x-hidden"
+      data-scroll-behavior="smooth"
+    >
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} ${
           isArabic ? "font-cairo" : "font-sans"
-        } antialiased bg-background text-foreground`}
+        } antialiased bg-background text-foreground overflow-x-hidden`}
         suppressHydrationWarning
       >
         <ThemeProvider
