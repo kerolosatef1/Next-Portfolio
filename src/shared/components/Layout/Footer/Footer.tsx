@@ -22,7 +22,7 @@ export function Footer() {
           {/* Copyright */}
           <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
             <p>
-              © {currentYear} Ahmed Mohamed. {t("copyright")}
+              © {currentYear} Kerolos Atef. {t("copyright")}
             </p>
             <p className="flex items-center gap-1">
               {t("madeWith")}{" "}

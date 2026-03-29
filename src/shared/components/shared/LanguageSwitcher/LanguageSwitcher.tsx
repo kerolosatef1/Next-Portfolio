@@ -1,8 +1,8 @@
 "use client"
 
-import { useLocale, useTranslations } from "next-intl"
-import { Languages } from "lucide-react"
-import { usePathname, useRouter } from "@/shared/lib/i18n/navigation"
+import { useLocale } from "next-intl"
+import { useRouter, usePathname } from "next/navigation"
+import { routing, localeNames, type Locale } from "@/i18n/routing"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -10,34 +10,43 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { routing } from "@/shared/lib/i18n/routing"
+import { ChevronDown, Check } from "lucide-react"
 
 export function LanguageSwitcher() {
-  const locale = useLocale()
+  const locale = useLocale() as Locale
   const router = useRouter()
   const pathname = usePathname()
-  const t = useTranslations("language")
 
-  const handleLocaleChange = (newLocale: string) => {
-    router.replace(pathname, { locale: newLocale })
+  const handleLocaleChange = (newLocale: Locale) => {
+    // Get the path without the current locale
+    const segments = pathname.split("/")
+    segments[1] = newLocale
+    const newPath = segments.join("/")
+    router.push(newPath)
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Languages className="h-5 w-5" />
-          <span className="sr-only">Change language</span>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5 text-sm font-medium cursor-pointer hover:bg-accent h-9 px-3"
+        >
+          <span className="hidden sm:inline">{localeNames[locale]}</span>
+          <span className="sm:hidden">{locale.toUpperCase()}</span>
+          <ChevronDown className="h-3.5 w-3.5 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="min-w-[150px]">
         {routing.locales.map((loc) => (
           <DropdownMenuItem
             key={loc}
-            onClick={() => handleLocaleChange(loc)}
-            className={locale === loc ? "bg-accent" : ""}
+            onClick={() => handleLocaleChange(loc as Locale)}
+            className="cursor-pointer flex items-center justify-between"
           >
-            {t(loc)}
+            <span>{localeNames[loc as Locale]}</span>
+            {locale === loc && <Check className="h-4 w-4 text-emerald-500" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

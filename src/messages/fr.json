@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "title": "Kerollos Atef | Développeur Frontend",
+    "description": "Développeur Frontend spécialisé en React, Next.js & TypeScript"
+  },
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "skills": "Compétences",
+    "projects": "Projets",
+    "experience": "Expérience",
+    "certificates": "Certificats",
+    "contact": "Contact"
+  },
+  "certificates": {
+    "title": "Certificats",
+    "subtitle": "Mes certifications professionnelles"
+  },
+  "hero": {
+    "greeting": "Bonjour, je suis",
+    "name": "Kerollos Atef",
+    "title": "Développeur Frontend",
+    "subtitle": "Je crée des expériences numériques exceptionnelles avec les technologies web modernes",
+    "cta": {
+      "projects": "Voir les projets",
+      "contact": "Me contacter"
+    },
+    "scroll": "Défiler vers le bas"
+  },
+  "about": {
+    "title": "À propos de moi",
+    "subtitle": "Apprenez à mieux me connaître",
+    "description": "Je suis un développeur Frontend passionné avec {years}+ années d'expérience dans la création d'applications web modernes. Je me spécialise en React, Next.js et TypeScript, créant des interfaces utilisateur performantes et accessibles.",
+    "stats": {
+      "experience": "Années d'expérience",
+      "projects": "Projets réalisés",
+      "clients": "Clients satisfaits"
+    }
+  },
+  "skills": {
+    "title": "Compétences",
+    "subtitle": "Technologies avec lesquelles je travaille",
+    "categories": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "tools": "Outils & Autres"
+    }
+  },
+  "projects": {
+    "title": "Projets",
+    "subtitle": "Quelques-unes de mes réalisations",
+    "viewAll": "Voir tous les projets",
+    "viewLive": "Démo en direct",
+    "viewCode": "Code source"
+  },
+  "experience": {
+    "title": "Expérience",
+    "subtitle": "Mon parcours professionnel",
+    "present": "Présent"
+  },
+  "contact": {
+    "title": "Me contacter",
+    "subtitle": "Travaillons ensemble",
+    "description": "Je suis actuellement disponible pour des missions freelance et des postes à temps plein. Si vous avez un projet en tête ou si vous souhaitez simplement dire bonjour, n'hésitez pas à me contacter !",
+    "form": {
+      "name": "Votre nom",
+      "email": "Votre e-mail",
+      "message": "Votre message",
+      "send": "Envoyer le message",
+      "sending": "Envoi en cours..."
+    },
+    "success": "Message envoyé avec succès !",
+    "error": "Une erreur s'est produite. Veuillez réessayer."
+  },
+  "footer": {
+    "copyright": "Tous droits réservés.",
+    "madeWith": "Créé avec"
+  },
+  "theme": {
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "language": {
+    "en": "English",
+    "ar": "العربية",
+    "de": "Deutsch",
+    "fr": "Français"
+  }
+}

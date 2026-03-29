@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "title": "Kerollos Atef | Frontend-Entwickler",
+    "description": "Frontend-Entwickler spezialisiert auf React, Next.js & TypeScript"
+  },
+  "nav": {
+    "home": "Startseite",
+    "about": "Über mich",
+    "skills": "Fähigkeiten",
+    "projects": "Projekte",
+    "experience": "Erfahrung",
+    "certificates": "Zertifikate",
+    "contact": "Kontakt"
+  },
+   "certificates": {
+    "title": "Zertifikate",
+    "subtitle": "Meine Berufszertifikate"
+  },
+  "hero": {
+    "greeting": "Hallo, ich bin",
+    "name": "Kerollos Atef",
+    "title": "Frontend-Entwickler",
+    "subtitle": "Ich entwickle außergewöhnliche digitale Erlebnisse mit modernen Webtechnologien",
+    "cta": {
+      "projects": "Projekte ansehen",
+      "contact": "Kontakt aufnehmen"
+    },
+    "scroll": "Nach unten scrollen"
+  },
+  "about": {
+    "title": "Über mich",
+    "subtitle": "Lernen Sie mich besser kennen",
+    "description": "Ich bin ein leidenschaftlicher Frontend-Entwickler mit {years}+ Jahren Erfahrung in der Entwicklung moderner Webanwendungen. Ich spezialisiere mich auf React, Next.js und TypeScript und erstelle performante und barrierefreie Benutzeroberflächen.",
+    "stats": {
+      "experience": "Jahre Erfahrung",
+      "projects": "Abgeschlossene Projekte",
+      "clients": "Zufriedene Kunden"
+    }
+  },
+  "skills": {
+    "title": "Fähigkeiten",
+    "subtitle": "Technologien, mit denen ich arbeite",
+    "categories": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "tools": "Tools & Sonstiges"
+    }
+  },
+  "projects": {
+    "title": "Projekte",
+    "subtitle": "Einige meiner Arbeiten",
+    "viewAll": "Alle Projekte ansehen",
+    "viewLive": "Live-Demo",
+    "viewCode": "Quellcode"
+  },
+  "experience": {
+    "title": "Erfahrung",
+    "subtitle": "Mein beruflicher Werdegang",
+    "present": "Heute"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "subtitle": "Lassen Sie uns zusammenarbeiten",
+    "description": "Ich bin derzeit für freiberufliche Projekte und Vollzeitstellen verfügbar. Wenn Sie ein Projekt im Sinn haben oder einfach nur Hallo sagen möchten, kontaktieren Sie mich gerne!",
+    "form": {
+      "name": "Ihr Name",
+      "email": "Ihre E-Mail",
+      "message": "Ihre Nachricht",
+      "send": "Nachricht senden",
+      "sending": "Wird gesendet..."
+    },
+    "success": "Nachricht erfolgreich gesendet!",
+    "error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut."
+  },
+  "footer": {
+    "copyright": "Alle Rechte vorbehalten.",
+    "madeWith": "Erstellt mit"
+  },
+  "theme": {
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
+  },
+  "language": {
+    "en": "English",
+    "ar": "العربية",
+    "de": "Deutsch",
+    "fr": "Français"
+  }
+}

@@ -1,77 +1,26 @@
-import type { Metadata } from "next"
+import { NextIntlClientProvider, hasLocale } from "next-intl"
+import { getMessages, setRequestLocale } from "next-intl/server"
 import { notFound } from "next/navigation"
-import { NextIntlClientProvider } from "next-intl"
-import { getMessages } from "next-intl/server"
+import { routing } from "@/i18n/routing"
 import { ThemeProvider } from "@/shared/provider/ThemeProvider"
-import { routing } from "@/shared/lib/i18n/routing"
-import { siteConfig } from "@/shared/config/site"
+import { Header } from "@/shared/components/Layout/Header/Header"
+import { Footer } from "@/shared/components/Layout/Footer/Footer"
 import { geistSans, geistMono, cairo } from "@/shared/lib/fonts"
+import type { Metadata } from "next"
 
+
+export const metadata: Metadata = {
+  title: "Kerolos Atef | Frontend Developer",
+  description: "Frontend Developer Portfolio",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
+}
 type Props = {
   children: React.ReactNode
   params: Promise<{ locale: string }>
-}
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params
-  const isArabic = locale === "ar"
-
-  return {
-    metadataBase: new URL(siteConfig.url),
-    title: {
-      default: siteConfig.name,
-      template: `%s | ${siteConfig.creator.name}`,
-    },
-    description: isArabic ? siteConfig.descriptionAr : siteConfig.description,
-    keywords: siteConfig.keywords,
-    authors: [{ name: siteConfig.creator.name }],
-    creator: siteConfig.creator.name,
-
-    openGraph: {
-      type: "website",
-      locale: isArabic ? "ar_EG" : "en_US",
-      url: siteConfig.url,
-      title: siteConfig.name,
-      description: isArabic ? siteConfig.descriptionAr : siteConfig.description,
-      siteName: siteConfig.name,
-      images: [
-        {
-          url: siteConfig.ogImage,
-          width: 1200,
-          height: 630,
-          alt: siteConfig.name,
-        },
-      ],
-    },
-
-    twitter: {
-      card: "summary_large_image",
-      title: siteConfig.name,
-      description: isArabic ? siteConfig.descriptionAr : siteConfig.description,
-      images: [siteConfig.ogImage],
-      creator: "@ahmed",
-    },
-
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
-    },
-
-    alternates: {
-      canonical: `${siteConfig.url}/${locale}`,
-      languages: {
-        en: `${siteConfig.url}/en`,
-        ar: `${siteConfig.url}/ar`,
-      },
-    },
-  }
 }
 
 export function generateStaticParams() {
@@ -81,10 +30,11 @@ export function generateStaticParams() {
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params
 
-  if (!routing.locales.includes(locale as any)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound()
   }
 
+  setRequestLocale(locale)
   const messages = await getMessages()
   const isArabic = locale === "ar"
 
@@ -93,7 +43,8 @@ export default async function LocaleLayout({ children, params }: Props) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} ${
           isArabic ? "font-cairo" : "font-sans"
-        } antialiased`}
+        } antialiased bg-background text-foreground`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"
@@ -101,8 +52,10 @@ export default async function LocaleLayout({ children, params }: Props) {
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider messages={messages}>
-            {children}
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <Header />
+            <main className="min-h-screen">{children}</main>
+            <Footer />
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

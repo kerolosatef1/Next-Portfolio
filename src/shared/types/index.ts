@@ -25,7 +25,7 @@ export interface Experience {
   position: string
   positionAr: string
   startDate: string
-  endDate: string | null // null = Present
+  endDate: string | null 
   description: string[]
   descriptionAr: string[]
   technologies: string[]

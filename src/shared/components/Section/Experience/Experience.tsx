@@ -7,38 +7,39 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Building2, Calendar } from "lucide-react"
 import { Container } from "@/shared/components/shared/Container/Container"
 import { SectionHeading } from "@/shared/components/shared/SectionHeading/SectionHeading"
+import { PageHeader } from "../../shared/PageHeader/PageHeader"
 
 gsap.registerPlugin(ScrollTrigger)
 
 const experienceData = [
   {
     id: "1",
-    company: "Tech Company",
-    companyAr: "شركة تقنية",
-    position: "Senior Frontend Developer",
-    positionAr: "مطور واجهات أمامية أول",
-    startDate: "2022",
-    endDate: null,
+    company: "Beetleware Company in Saudi-Arabia",
+    companyAr: " في السعودية beetleware شركة ",
+    position: "Junior Frontend Developer InternShip",
+    positionAr: "تدريب  واجهات أمامية ",
+    startDate: "2025",
+    endDate: "24/3/2026",
     description: [
-      "Led the frontend development team of 5 developers",
+      "part of the frontend development team of 3 developers",
       "Implemented new features using React and Next.js",
       "Improved application performance by 40%",
     ],
     descriptionAr: [
-      "قيادة فريق تطوير الواجهات الأمامية المكون من 5 مطورين",
+      "جزء فريق التطوير الواجهات الأمامية المكون من 5 مطورين",
       "تنفيذ ميزات جديدة باستخدام React و Next.js",
       "تحسين أداء التطبيق بنسبة 40%",
     ],
-    technologies: ["React", "Next.js", "TypeScript"],
+    technologies: ["React", "Next.js", "TypeScript","redux","noval state","Shadcn/UI","Next Auth","Chart.js"],
   },
   {
     id: "2",
-    company: "Digital Agency",
-    companyAr: "وكالة رقمية",
+    company: "Digital Agency for freelancing",
+    companyAr: " وكالة رقميةللاعمال الحرة",
     position: "Frontend Developer",
     positionAr: "مطور واجهات أمامية",
-    startDate: "2020",
-    endDate: "2022",
+    startDate: "2023",
+    endDate: "present",
     description: [
       "Developed responsive web applications",
       "Collaborated with designers to implement UI/UX designs",
@@ -48,29 +49,10 @@ const experienceData = [
       "تطوير تطبيقات ويب متجاوبة",
       "التعاون مع المصممين لتنفيذ تصميمات UI/UX",
       "صيانة وتحسين قواعد الكود الحالية",
+      " التعامل مع الواجهات الخلفية وال API "
     ],
-    technologies: ["React", "JavaScript", "Sass"],
-  },
-  {
-    id: "3",
-    company: "Startup",
-    companyAr: "شركة ناشئة",
-    position: "Junior Frontend Developer",
-    positionAr: "مطور واجهات أمامية مبتدئ",
-    startDate: "2019",
-    endDate: "2020",
-    description: [
-      "Built UI components using React",
-      "Learned best practices and coding standards",
-      "Participated in code reviews",
-    ],
-    descriptionAr: [
-      "بناء مكونات واجهة المستخدم باستخدام React",
-      "تعلم أفضل الممارسات ومعايير الكود",
-      "المشاركة في مراجعات الكود",
-    ],
-    technologies: ["React", "CSS", "HTML"],
-  },
+    technologies: ["NEXT.JS","React","TypeScript" ,"JavaScript", "Tailwind css","Sass","Metrial/UI","Shadcn/UI","Chart.js","Next Auth" ,"ISR , SSG , SSR"],
+  }
 ]
 
 export function Experience() {
@@ -108,7 +90,8 @@ export function Experience() {
       className="py-20 md:py-32 bg-muted/30"
     >
       <Container>
-        <SectionHeading title={t("title")} subtitle={t("subtitle")} />
+      <PageHeader title={t("title")} subtitle={t("subtitle")} locale={locale} />
+        
 
         <div className="relative max-w-3xl mx-auto">
           {/* Timeline Line */}

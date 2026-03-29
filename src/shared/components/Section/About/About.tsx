@@ -20,16 +20,11 @@ const stats = [
   },
   {
     key: "projects",
-    value: 50,
+    value: 15,
     suffix: "+",
     icon: FolderGit2,
   },
-  {
-    key: "clients",
-    value: 30,
-    suffix: "+",
-    icon: Users,
-  },
+  
 ]
 
 export function About() {

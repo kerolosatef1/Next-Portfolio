@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "Ahmed Mohamed | Frontend Developer",
+    "title": "Kerollos Atef | Frontend Developer",
     "description": "Frontend Developer specialized in React, Next.js & TypeScript"
   },
   "nav": {
@@ -9,11 +9,16 @@
     "skills": "Skills",
     "projects": "Projects",
     "experience": "Experience",
+    "certificates": "Certificates",
     "contact": "Contact"
+  },
+  "certificates": {
+    "title": "Certificates",
+    "subtitle": "My Professional Certifications"
   },
   "hero": {
     "greeting": "Hi, I'm",
-    "name": "Ahmed Mohamed",
+    "name": "Kerollos Atef",
     "title": "Frontend Developer",
     "subtitle": "I build exceptional digital experiences with modern web technologies",
     "cta": {

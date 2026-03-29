@@ -6,8 +6,13 @@ import { Skills } from "@/shared/components/Section/Skills/Skills"
 import { Projects } from "@/shared/components/Section/Projects/Projects"
 import { Experience } from "@/shared/components/Section/Experience/Experience"
 import { Contact } from "@/shared/components/Section/Contact/Contact"
-
-export default function HomePage() {
+import { setRequestLocale } from "next-intl/server"
+type Props = {
+  params: Promise<{ locale: string }>
+}
+export default async function HomePage({ params }: Props) {
+  const { locale } = await params
+  setRequestLocale(locale)
   return (
     <>
       <Header />
@@ -19,7 +24,7 @@ export default function HomePage() {
         <Experience />
         <Contact />
       </main>
-      <Footer />
+      
     </>
   )
 }

@@ -1,5 +1,4 @@
 "use client"
-
 import { useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { X } from "lucide-react"
@@ -77,7 +76,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Footer */}
           <div className="p-4 border-t border-border">
             <p className="text-xs text-muted-foreground text-center">
-              © 2024 Ahmed Mohamed
+              © 2026 Kerolos Atef 
             </p>
           </div>
         </div>

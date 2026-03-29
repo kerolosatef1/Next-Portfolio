@@ -1,35 +1,37 @@
 export const siteConfig = {
-  name: "Ahmed Mohamed | Frontend Developer",
-  shortName: "Ahmed Dev",
+  name: "Kerolos Atef | Frontend Developer",
+  shortName: "Kerolos Dev",
   description:
     "Frontend Developer specialized in React, Next.js & TypeScript. Building exceptional user experiences with modern web technologies.",
   descriptionAr:
     "مطور واجهات أمامية متخصص في React, Next.js و TypeScript. أبني تجارب مستخدم استثنائية باستخدام أحدث تقنيات الويب.",
-  url: "https://ahmeddev.com",
+  url: "https://Kerolosdev.com",
   ogImage: "/og-image.png",
 
   creator: {
-    name: "Ahmed Mohamed",
-    nameAr: "أحمد محمد",
-    title: "Senior Frontend Developer",
+    name: "Kerolos Atef",
+    nameAr: "كيرلس عاطف",
+    title: "Juinor Frontend Developer",
     titleAr: "مطور واجهات أمامية",
-    email: "ahmed@example.com",
+    email: "atefkerolos25@gmail.com",
+    phone: "+201212092100", 
+    whatsapp: "+201212092100",
     location: "Cairo, Egypt",
     locationAr: "القاهرة، مصر",
-    yearsOfExperience: 5,
+    yearsOfExperience: 2,
     availableForWork: true,
   },
 
   links: {
-    github: "https://github.com/ahmed",
-    linkedin: "https://linkedin.com/in/ahmed",
-    twitter: "https://twitter.com/ahmed",
-    cv: "/cv.pdf",
+    github: "https://github.com/kerolosatef1",
+    linkedin: "https://linkedin.com/in/faragello",
+    whatsapp: "https://wa.me/201212092100", 
+    cv: "https://drive.google.com/drive/folders/1VeA450DS2rEXd_oO5uAMHJGehb3g6z_4?usp=sharing",
   },
 
  keywords: [
     "Frontend Developer",
-    "React Developer",
+    "React  Developer",
     "Next.js Developer",
     "TypeScript Developer",
     "مطور واجهات أمامية",
@@ -49,6 +51,8 @@ export const siteConfig = {
     title: string
     titleAr: string
     email: string
+    phone:string
+    whatsapp:string
     location: string
     locationAr: string
     yearsOfExperience: number
@@ -57,8 +61,8 @@ export const siteConfig = {
   links: {
     github: string
     linkedin: string
-    twitter: string
     cv: string
+    whatsapp:string
   }
   keywords: string[]
 }

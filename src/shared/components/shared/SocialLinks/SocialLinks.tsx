@@ -1,5 +1,4 @@
 "use client"
-
 import { socialLinks } from "@/shared/config/social"
 import { Button } from "@/components/ui/button"
 
