@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Container } from "@/shared/components/shared/Container/Container"
 import { SocialLinks } from "@/shared/components/shared/SocialLinks/SocialLinks"
 import { siteConfig } from "@/shared/config/site"
-import { useGsapTimeline } from "@/shared/hooks/useGsap"
 
 export function Hero() {
   const t = useTranslations("hero")
@@ -17,15 +16,7 @@ export function Hero() {
   const ctaRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  useGsapTimeline(containerRef, (tl) => {
-    tl.to(".hero-greeting", { opacity: 1, y: 0, duration: 0.6 })
-      .to(titleRef.current!, { opacity: 1, y: 0, duration: 0.8 }, "-=0.3")
-      .to(".hero-title-role", { opacity: 1, y: 0, duration: 0.6 }, "-=0.4")
-      .to(subtitleRef.current!, { opacity: 1, y: 0, duration: 0.6 }, "-=0.3")
-      .to(ctaRef.current!, { opacity: 1, y: 0, duration: 0.6 }, "-=0.3")
-      .to(".hero-social", { opacity: 1, x: 0, duration: 0.5 }, "-=0.2")
-      .to(scrollRef.current!, { opacity: 1, y: 0, duration: 0.5 }, "-=0.2")
-  })
+  
 
   return (
     <section

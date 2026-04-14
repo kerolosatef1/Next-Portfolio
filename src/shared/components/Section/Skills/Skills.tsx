@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { PageLayout } from "@/shared/components/shared/PageLayout/PageLayout"
 import { PageHeader } from "@/shared/components/shared/PageHeader/PageHeader"
 import { cn } from "@/lib/utils"
@@ -43,6 +44,10 @@ import {
   TbSeo,
 } from "react-icons/tb"
 import type { IconType } from "react-icons"
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 interface Skill {
   name: string
@@ -109,21 +114,11 @@ export function Skills({ locale }: SkillsProps) {
     setIsClient(true)
   }, [])
 
-  /**
-   * TRULY seamless marquee.
-   *
-   * Strategy:
-   * - Render skills 4 times (massive overflow buffer)
-   * - Calculate width of ONE set
-   * - Use modifiers + gsap.utils.wrap() for infinite loop
-   * - Direction "left" means content moves left (visually scrolls right→left)
-   * - For RTL we just flip the direction
-   */
   const setupMarquee = useCallback(
     (
       element: HTMLDivElement | null,
       direction: "left" | "right",
-      speed: number, // pixels per second
+      speed: number,
       copies: number = 4
     ): gsap.core.Tween | null => {
       if (!element) return null
@@ -131,13 +126,11 @@ export function Skills({ locale }: SkillsProps) {
       const content = element.querySelector(".marquee-content") as HTMLElement
       if (!content) return null
 
-      // Width of ONE set of items
       const totalWidth = content.scrollWidth
       const singleSetWidth = totalWidth / copies
 
       if (singleSetWidth <= 0) return null
 
-      // In RTL, we flip the direction so it visually feels natural
       const finalDirection = isArabic
         ? direction === "left"
           ? "right"
@@ -147,21 +140,15 @@ export function Skills({ locale }: SkillsProps) {
       const duration = singleSetWidth / speed
 
       gsap.killTweensOf(content)
-
-      // Reset position
       gsap.set(content, { x: 0 })
 
-      // Create wrap function based on direction
       let wrap: (n: number) => number
       let xTarget: string
 
       if (finalDirection === "left") {
-        // Moving left: x goes from 0 → -singleSetWidth, then wraps back to 0
         wrap = gsap.utils.wrap(-singleSetWidth, 0)
         xTarget = `-=${singleSetWidth}`
       } else {
-        // Moving right: x goes from 0 → +singleSetWidth, then wraps back to 0
-        // We start at -singleSetWidth so there's content on the left
         gsap.set(content, { x: -singleSetWidth })
         wrap = gsap.utils.wrap(-singleSetWidth, 0)
         xTarget = `+=${singleSetWidth}`
@@ -174,14 +161,10 @@ export function Skills({ locale }: SkillsProps) {
         repeat: -1,
         force3D: true,
         modifiers: {
-          x: (x) => {
-            const num = parseFloat(x)
-            return `${wrap(num)}px`
-          },
+          x: (x) => `${wrap(parseFloat(x))}px`,
         },
       })
 
-      // Smooth pause/resume on hover
       const pause = () =>
         gsap.to(tween, { timeScale: 0, duration: 0.4, ease: "power2.out" })
       const resume = () =>
@@ -199,41 +182,41 @@ export function Skills({ locale }: SkillsProps) {
     [isArabic]
   )
 
-  // Initial fade-in animations
+  // Rich scroll-triggered entrance animations
   useEffect(() => {
     if (!isClient || !containerRef.current) return
 
     const rafId = requestAnimationFrame(() => {
       const ctx = gsap.context(() => {
-        const titleEl = containerRef.current?.querySelector(
-          "[data-animate='title']"
-        )
-        const rowEls = containerRef.current?.querySelectorAll(
-          "[data-animate='row']"
-        )
+        // Each row slides in from alternating directions with blur
+        gsap.utils
+          .toArray<HTMLElement>("[data-skill-row]")
+          .forEach((row, i) => {
+            const direction = i % 2 === 0 ? -100 : 100
 
-        if (titleEl) {
-          gsap.fromTo(
-            titleEl,
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
-          )
-        }
-
-        if (rowEls && rowEls.length > 0) {
-          gsap.fromTo(
-            rowEls,
-            { opacity: 0, y: 20 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              stagger: 0.2,
-              ease: "power2.out",
-              delay: 0.3,
-            }
-          )
-        }
+            gsap.fromTo(
+              row,
+              {
+                opacity: 0,
+                x: direction,
+                filter: "blur(15px)",
+                scale: 0.95,
+              },
+              {
+                opacity: 1,
+                x: 0,
+                filter: "blur(0px)",
+                scale: 1,
+                duration: 1,
+                ease: "power3.out",
+                scrollTrigger: {
+                  trigger: row,
+                  start: "top 85%",
+                  toggleActions: "play none none reverse",
+                },
+              }
+            )
+          })
       }, containerRef)
 
       return () => ctx.revert()
@@ -250,7 +233,6 @@ export function Skills({ locale }: SkillsProps) {
     let resizeTimer: NodeJS.Timeout
 
     const initMarquees = () => {
-      // Cleanup
       tweensRef.current.forEach((tween) => {
         if (tween) {
           ;(tween as any)._cleanup?.()
@@ -259,7 +241,6 @@ export function Skills({ locale }: SkillsProps) {
       })
       tweensRef.current = []
 
-      // 4 copies for buffer
       const tween1 = setupMarquee(row1Ref.current, "right", 50, 4)
       const tween2 = setupMarquee(row2Ref.current, "left", 40, 4)
       const tween3 = setupMarquee(row3Ref.current, "right", 45, 4)
@@ -269,18 +250,15 @@ export function Skills({ locale }: SkillsProps) {
       if (tween3) tweensRef.current.push(tween3)
     }
 
-    // Wait for fonts and images to load for accurate measurements
     const waitForReady = async () => {
       if (document.fonts && document.fonts.ready) {
         await document.fonts.ready
       }
-      // Small extra delay for icons to render
       timer = setTimeout(initMarquees, 200)
     }
 
     waitForReady()
 
-    // Re-init on resize
     const handleResize = () => {
       clearTimeout(resizeTimer)
       resizeTimer = setTimeout(initMarquees, 250)
@@ -301,7 +279,6 @@ export function Skills({ locale }: SkillsProps) {
     }
   }, [isClient, setupMarquee])
 
-  // Pause when tab hidden
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
@@ -342,9 +319,9 @@ export function Skills({ locale }: SkillsProps) {
           "flex items-center gap-3 px-5 py-3 rounded-full",
           "bg-card/80 backdrop-blur-sm",
           "border border-border/50 hover:border-emerald-500/50",
-          "transition-all duration-300 hover:scale-105 hover:bg-card",
+          "transition-all duration-300 hover:scale-110 hover:bg-card hover:-translate-y-1",
           "cursor-default select-none whitespace-nowrap flex-shrink-0",
-          "shadow-sm hover:shadow-md hover:shadow-emerald-500/10"
+          "shadow-sm hover:shadow-lg hover:shadow-emerald-500/20"
         )}
       >
         <Icon
@@ -365,24 +342,15 @@ export function Skills({ locale }: SkillsProps) {
     skills: Skill[]
     rowRef: React.RefObject<HTMLDivElement | null>
   }) => {
-    // 4 copies = solid buffer, no chance of empty space
-    const repeatedSkills = [
-      ...skills,
-      ...skills,
-      ...skills,
-      ...skills,
-    ]
+    const repeatedSkills = [...skills, ...skills, ...skills, ...skills]
 
     return (
       <div
         ref={rowRef}
-        data-animate="row"
-        // dir="ltr" forces marquee to behave LTR even inside Arabic page
-        // This is critical for predictable measurements
+        data-skill-row
         dir="ltr"
         className="relative overflow-hidden py-3"
       >
-        {/* Edge gradient masks */}
         <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
@@ -398,13 +366,11 @@ export function Skills({ locale }: SkillsProps) {
   return (
     <PageLayout>
       <div ref={containerRef} className="relative">
-        <div data-animate="title">
-          <PageHeader
-            title={t("title")}
-            subtitle={t("subtitle")}
-            locale={locale}
-          />
-        </div>
+        <PageHeader
+          title={t("title")}
+          subtitle={t("subtitle")}
+          locale={locale}
+        />
 
         <div className="space-y-4 md:space-y-6 -mx-4 md:-mx-8 lg:-mx-16">
           <MarqueeRow skills={skillsRow1} rowRef={row1Ref} />
