@@ -1,12 +1,13 @@
 "use client"
 
 import { useRef } from "react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { Briefcase, FolderGit2 } from "lucide-react"
 import { Container } from "@/shared/components/shared/Container/Container"
 import { SectionHeading } from "@/shared/components/shared/SectionHeading/SectionHeading"
 import { siteConfig } from "@/shared/config/site"
 import { useGsapAnimation } from "@/shared/hooks/useGsap"
+import { PageHeader } from "../../shared/PageHeader/PageHeader"
 
 const stats = [
   {
@@ -26,8 +27,10 @@ const stats = [
 export function About() {
   const t = useTranslations("about")
   const sectionRef = useRef<HTMLDivElement>(null)
+const locale = useLocale()
+  const isArabic = locale === "ar"
 
-  useGsapAnimation(sectionRef, [
+useGsapAnimation(sectionRef, [
     {
       target: "[data-gsap-fade-up]",
       from: { opacity: 0, y: 30 },
@@ -53,7 +56,11 @@ export function About() {
   return (
     <section id="about" ref={sectionRef} className="py-20 md:py-32">
       <Container>
-        <SectionHeading title={t("title")} subtitle={t("subtitle")} />
+        <PageHeader
+                  title={t("title")}
+                  subtitle={t("subtitle")}
+                  locale={locale}
+                />
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div data-gsap-fade-up className="space-y-6">

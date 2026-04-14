@@ -9,7 +9,9 @@ import { experiences, getLocalizedExperience } from "@/data/Experience"
 import { MapPin, Calendar, ExternalLink, Building2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-gsap.registerPlugin(ScrollTrigger)
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 interface ExperienceContentProps {
   locale: string
@@ -45,16 +47,20 @@ export function ExperienceContent({ locale }: ExperienceContentProps) {
       experiencesRef.current.forEach((exp, index) => {
         if (!exp) return
 
+        const isMobile = window.innerWidth < 768
+
         gsap.fromTo(
           exp,
           {
             opacity: 0,
-            x: index % 2 === 0 ? -100 : 100,
-            scale: 0.9,
+            x: isMobile ? 0 : index % 2 === 0 ? -100 : 100,
+            y: isMobile ? 50 : 0,
+            scale: 0.95,
           },
           {
             opacity: 1,
             x: 0,
+            y: 0,
             scale: 1,
             duration: 0.8,
             ease: "power3.out",
@@ -67,36 +73,40 @@ export function ExperienceContent({ locale }: ExperienceContentProps) {
         )
 
         const dot = exp.querySelector(".timeline-dot")
-        gsap.fromTo(
-          dot,
-          { scale: 0 },
-          {
-            scale: 1,
-            duration: 0.5,
-            ease: "back.out(1.7)",
-            scrollTrigger: {
-              trigger: exp,
-              start: "top 80%",
-            },
-          }
-        )
+        if (dot) {
+          gsap.fromTo(
+            dot,
+            { scale: 0 },
+            {
+              scale: 1,
+              duration: 0.5,
+              ease: "back.out(1.7)",
+              scrollTrigger: {
+                trigger: exp,
+                start: "top 80%",
+              },
+            }
+          )
+        }
 
         const techs = exp.querySelectorAll(".tech-badge")
-        gsap.fromTo(
-          techs,
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.4,
-            stagger: 0.05,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: exp,
-              start: "top 70%",
-            },
-          }
-        )
+        if (techs.length > 0) {
+          gsap.fromTo(
+            techs,
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              stagger: 0.05,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: exp,
+                start: "top 70%",
+              },
+            }
+          )
+        }
       })
     }, timelineRef)
 
@@ -138,19 +148,20 @@ export function ExperienceContent({ locale }: ExperienceContentProps) {
     freelance: { en: "Freelance", ar: "عمل حر", de: "Freiberuflich", fr: "Freelance" },
   }
 
-  const t = (key: keyof typeof labels) => labels[key][locale as keyof typeof labels.title] || labels[key].en
+  const t = (key: keyof typeof labels) =>
+    labels[key][locale as keyof typeof labels.title] || labels[key].en
 
   return (
     <PageLayout>
       <PageHeader title={t("title")} subtitle={t("subtitle")} locale={locale} />
 
       <div ref={timelineRef} className="relative max-w-4xl mx-auto">
+        {/* Timeline line - thinner on mobile, positioned closer to edge */}
         <div
-          className="timeline-line absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-500 via-emerald-500/50 to-transparent origin-top"
-          style={{ transform: "translateX(-50%)" }}
+          className="timeline-line absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-500 via-emerald-500/50 to-transparent origin-top md:-translate-x-1/2"
         />
 
-        <div className="space-y-12">
+        <div className="space-y-8 md:space-y-12">
           {experiences.map((exp, index) => {
             const localized = getLocalizedExperience(exp, locale)
             const isLeft = index % 2 === 0
@@ -161,36 +172,42 @@ export function ExperienceContent({ locale }: ExperienceContentProps) {
                 ref={(el) => {
                   if (el) experiencesRef.current[index] = el
                 }}
-                className={cn("relative flex items-start gap-8", "md:justify-center")}
+                className="relative md:flex md:justify-center"
               >
+                {/* Timeline Dot - smaller on mobile, positioned at line */}
                 <div
-                  className={cn(
-                    "timeline-dot absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-emerald-500 border-4 border-background z-10",
-                    "shadow-lg shadow-emerald-500/50"
-                  )}
-                  style={{ transform: "translateX(-50%)" }}
+                  className="timeline-dot absolute left-4 md:left-1/2 top-6 md:top-8 w-3 h-3 md:w-4 md:h-4 rounded-full bg-emerald-500 border-2 md:border-4 border-background z-10 -translate-x-1/2 shadow-lg shadow-emerald-500/50"
                 />
 
+                {/* Card wrapper - full width on mobile minus the line space */}
                 <div
                   className={cn(
-                    "ml-16 md:ml-0 md:w-[calc(50%-40px)]",
+                    "pl-10 md:pl-0",
+                    "md:w-[calc(50%-32px)]",
                     isLeft ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8"
                   )}
                 >
-                  <div className="p-6 rounded-2xl bg-card border border-border hover:border-emerald-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10">
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-3 rounded-xl bg-emerald-500/10">
-                          <Building2 className="w-6 h-6 text-emerald-500" />
+                  <div className="p-4 sm:p-5 md:p-6 rounded-2xl bg-card border border-border hover:border-emerald-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10">
+                    {/* Header: stack on mobile, side-by-side on larger screens */}
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <div className="p-2 md:p-3 rounded-xl bg-emerald-500/10 shrink-0">
+                          <Building2 className="w-5 h-5 md:w-6 md:h-6 text-emerald-500" />
                         </div>
-                        <div>
-                          <h3 className="text-xl font-bold text-foreground">{localized.company}</h3>
-                          <p className="text-emerald-500 font-medium">{localized.position}</p>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-base md:text-xl font-bold text-foreground leading-tight break-words">
+                            {localized.company}
+                          </h3>
+                          <p className="text-sm md:text-base text-emerald-500 font-medium mt-1 break-words">
+                            {localized.position}
+                          </p>
                         </div>
                       </div>
+
+                      {/* Badge - smaller and self-positioned on mobile */}
                       <span
                         className={cn(
-                          "px-3 py-1 rounded-full text-xs font-medium",
+                          "self-start sm:self-auto px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap shrink-0",
                           exp.endDate === "Present"
                             ? "bg-emerald-500/20 text-emerald-500"
                             : "bg-secondary text-muted-foreground"
@@ -200,47 +217,55 @@ export function ExperienceContent({ locale }: ExperienceContentProps) {
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
+                    {/* Meta info - wraps nicely */}
+                    <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs md:text-sm text-muted-foreground mb-4">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
                         <span>
-                          {exp.startDate} - {exp.endDate === "Present" ? t("present") : exp.endDate}
+                          {exp.startDate} -{" "}
+                          {exp.endDate === "Present" ? t("present") : exp.endDate}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
                         <span>{localized.location}</span>
                       </div>
                     </div>
 
+                    {/* Description list */}
                     <ul className="space-y-2 mb-4">
                       {localized.description.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <span className="text-emerald-500 mt-1">•</span>
+                        <li
+                          key={i}
+                          className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground leading-relaxed"
+                        >
+                          <span className="text-emerald-500 mt-0.5 shrink-0">•</span>
                           <span>{item}</span>
                         </li>
                       ))}
                     </ul>
 
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    {/* Tech badges */}
+                    <div className="flex flex-wrap gap-1.5 md:gap-2 mb-4">
                       {exp.technologies.map((tech) => (
                         <span
                           key={tech}
-                          className="tech-badge px-3 py-1 rounded-full text-xs font-medium bg-secondary text-foreground"
+                          className="tech-badge px-2 py-1 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-medium bg-secondary text-foreground"
                         >
                           {tech}
                         </span>
                       ))}
                     </div>
 
+                    {/* Website link */}
                     {exp.website && (
                       <a
                         href={exp.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-emerald-500 hover:text-emerald-400 transition-colors"
+                        className="inline-flex items-center gap-2 text-xs md:text-sm text-emerald-500 hover:text-emerald-400 transition-colors"
                       >
-                        <ExternalLink className="w-4 h-4" />
+                        <ExternalLink className="w-3.5 h-3.5 md:w-4 md:h-4" />
                         <span>{t("viewWebsite")}</span>
                       </a>
                     )}

@@ -56,7 +56,7 @@ export function Hero() {
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4"
           >
             {t("name")}
-            <span className="text-emerald-500">.</span>
+            
           </h1>
 
           {/* Role - starts hidden via CSS (.hero-title-role { opacity: 0 }) */}
@@ -107,16 +107,7 @@ export function Hero() {
       </Container>
 
       {/* Scroll Indicator */}
-      <div
-        ref={scrollRef}
-        data-gsap-fade
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground -translate-y-5"
-      >
-        <span className="text-sm">{t("scroll")}</span>
-        <div className="w-6 h-10 border-2 border-muted-foreground/50 rounded-full flex justify-center p-2">
-          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" />
-        </div>
-      </div>
+      
     </section>
   )
 }

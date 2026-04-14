@@ -6,7 +6,6 @@ import { PageLayout } from "@/shared/components/shared/PageLayout/PageLayout"
 import { PageHeader } from "@/shared/components/shared/PageHeader/PageHeader"
 import { cn } from "@/lib/utils"
 
-// React Icons
 import {
   SiJavascript,
   SiTypescript,
@@ -51,7 +50,6 @@ interface Skill {
   color: string
 }
 
-// Row 1 - Core Technologies
 const skillsRow1: Skill[] = [
   { name: "JavaScript", icon: SiJavascript, color: "#f7df1e" },
   { name: "TypeScript", icon: SiTypescript, color: "#3178c6" },
@@ -63,7 +61,6 @@ const skillsRow1: Skill[] = [
   { name: "Sass/SCSS", icon: SiSass, color: "#cc6699" },
 ]
 
-// Row 2 - Libraries & Tools
 const skillsRow2: Skill[] = [
   { name: "Redux Toolkit", icon: SiRedux, color: "#764abc" },
   { name: "REST APIs", icon: TbApi, color: "#10b981" },
@@ -81,7 +78,6 @@ const skillsRow2: Skill[] = [
   { name: "GSAP", icon: SiGreensock, color: "#88ce02" },
 ]
 
-// Row 3 - UI & More
 const skillsRow3: Skill[] = [
   { name: "Chart.js", icon: SiChartdotjs, color: "#ff6384" },
   { name: "Node.js", icon: SiNodedotjs, color: "#339933" },
@@ -113,21 +109,36 @@ export function Skills({ locale }: SkillsProps) {
     setIsClient(true)
   }, [])
 
-  // Seamless Marquee Setup
+  /**
+   * TRULY seamless marquee.
+   *
+   * Strategy:
+   * - Render skills 4 times (massive overflow buffer)
+   * - Calculate width of ONE set
+   * - Use modifiers + gsap.utils.wrap() for infinite loop
+   * - Direction "left" means content moves left (visually scrolls right→left)
+   * - For RTL we just flip the direction
+   */
   const setupMarquee = useCallback(
     (
       element: HTMLDivElement | null,
       direction: "left" | "right",
-      speed: number
+      speed: number, // pixels per second
+      copies: number = 4
     ): gsap.core.Tween | null => {
       if (!element) return null
 
       const content = element.querySelector(".marquee-content") as HTMLElement
       if (!content) return null
 
-      const singleSetWidth = content.scrollWidth / 2
+      // Width of ONE set of items
+      const totalWidth = content.scrollWidth
+      const singleSetWidth = totalWidth / copies
 
-      const actualDirection = isArabic
+      if (singleSetWidth <= 0) return null
+
+      // In RTL, we flip the direction so it visually feels natural
+      const finalDirection = isArabic
         ? direction === "left"
           ? "right"
           : "left"
@@ -137,70 +148,69 @@ export function Skills({ locale }: SkillsProps) {
 
       gsap.killTweensOf(content)
 
-      if (actualDirection === "left") {
-        gsap.set(content, { x: 0 })
+      // Reset position
+      gsap.set(content, { x: 0 })
 
-        const tween = gsap.to(content, {
-          x: -singleSetWidth,
-          duration: duration,
-          ease: "none",
-          repeat: -1,
-          force3D: true,
-          onRepeat: () => {
-            gsap.set(content, { x: 0 })
-          },
-        })
+      // Create wrap function based on direction
+      let wrap: (n: number) => number
+      let xTarget: string
 
-        const pause = () => tween.pause()
-        const resume = () => tween.resume()
-        element.addEventListener("mouseenter", pause)
-        element.addEventListener("mouseleave", resume)
-        ;(tween as any)._cleanup = () => {
-          element.removeEventListener("mouseenter", pause)
-          element.removeEventListener("mouseleave", resume)
-        }
-
-        return tween
+      if (finalDirection === "left") {
+        // Moving left: x goes from 0 → -singleSetWidth, then wraps back to 0
+        wrap = gsap.utils.wrap(-singleSetWidth, 0)
+        xTarget = `-=${singleSetWidth}`
       } else {
+        // Moving right: x goes from 0 → +singleSetWidth, then wraps back to 0
+        // We start at -singleSetWidth so there's content on the left
         gsap.set(content, { x: -singleSetWidth })
-
-        const tween = gsap.to(content, {
-          x: 0,
-          duration: duration,
-          ease: "none",
-          repeat: -1,
-          force3D: true,
-          onRepeat: () => {
-            gsap.set(content, { x: -singleSetWidth })
-          },
-        })
-
-        const pause = () => tween.pause()
-        const resume = () => tween.resume()
-        element.addEventListener("mouseenter", pause)
-        element.addEventListener("mouseleave", resume)
-        ;(tween as any)._cleanup = () => {
-          element.removeEventListener("mouseenter", pause)
-          element.removeEventListener("mouseleave", resume)
-        }
-
-        return tween
+        wrap = gsap.utils.wrap(-singleSetWidth, 0)
+        xTarget = `+=${singleSetWidth}`
       }
+
+      const tween = gsap.to(content, {
+        x: xTarget,
+        duration: duration,
+        ease: "none",
+        repeat: -1,
+        force3D: true,
+        modifiers: {
+          x: (x) => {
+            const num = parseFloat(x)
+            return `${wrap(num)}px`
+          },
+        },
+      })
+
+      // Smooth pause/resume on hover
+      const pause = () =>
+        gsap.to(tween, { timeScale: 0, duration: 0.4, ease: "power2.out" })
+      const resume = () =>
+        gsap.to(tween, { timeScale: 1, duration: 0.4, ease: "power2.out" })
+
+      element.addEventListener("mouseenter", pause)
+      element.addEventListener("mouseleave", resume)
+      ;(tween as any)._cleanup = () => {
+        element.removeEventListener("mouseenter", pause)
+        element.removeEventListener("mouseleave", resume)
+      }
+
+      return tween
     },
     [isArabic]
   )
 
-  // Initial animations - NO ScrollTrigger here to avoid the removeChild error
+  // Initial fade-in animations
   useEffect(() => {
     if (!isClient || !containerRef.current) return
 
-    // Wait for next frame so DOM elements are definitely rendered
     const rafId = requestAnimationFrame(() => {
       const ctx = gsap.context(() => {
-        // Use refs or direct children instead of class selectors
-        // This avoids "target not found" warnings
-        const titleEl = containerRef.current?.querySelector("[data-animate='title']")
-        const rowEls = containerRef.current?.querySelectorAll("[data-animate='row']")
+        const titleEl = containerRef.current?.querySelector(
+          "[data-animate='title']"
+        )
+        const rowEls = containerRef.current?.querySelectorAll(
+          "[data-animate='row']"
+        )
 
         if (titleEl) {
           gsap.fromTo(
@@ -232,12 +242,15 @@ export function Skills({ locale }: SkillsProps) {
     return () => cancelAnimationFrame(rafId)
   }, [isClient])
 
-  // Marquee animations
+  // Marquee setup
   useEffect(() => {
     if (!isClient) return
 
-    const timer = setTimeout(() => {
-      // Cleanup old tweens
+    let timer: NodeJS.Timeout
+    let resizeTimer: NodeJS.Timeout
+
+    const initMarquees = () => {
+      // Cleanup
       tweensRef.current.forEach((tween) => {
         if (tween) {
           ;(tween as any)._cleanup?.()
@@ -246,17 +259,38 @@ export function Skills({ locale }: SkillsProps) {
       })
       tweensRef.current = []
 
-      const tween1 = setupMarquee(row1Ref.current, "right", 50)
-      const tween2 = setupMarquee(row2Ref.current, "left", 40)
-      const tween3 = setupMarquee(row3Ref.current, "right", 45)
+      // 4 copies for buffer
+      const tween1 = setupMarquee(row1Ref.current, "right", 50, 4)
+      const tween2 = setupMarquee(row2Ref.current, "left", 40, 4)
+      const tween3 = setupMarquee(row3Ref.current, "right", 45, 4)
 
       if (tween1) tweensRef.current.push(tween1)
       if (tween2) tweensRef.current.push(tween2)
       if (tween3) tweensRef.current.push(tween3)
-    }, 300)
+    }
+
+    // Wait for fonts and images to load for accurate measurements
+    const waitForReady = async () => {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready
+      }
+      // Small extra delay for icons to render
+      timer = setTimeout(initMarquees, 200)
+    }
+
+    waitForReady()
+
+    // Re-init on resize
+    const handleResize = () => {
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(initMarquees, 250)
+    }
+    window.addEventListener("resize", handleResize)
 
     return () => {
       clearTimeout(timer)
+      clearTimeout(resizeTimer)
+      window.removeEventListener("resize", handleResize)
       tweensRef.current.forEach((tween) => {
         if (tween) {
           ;(tween as any)._cleanup?.()
@@ -267,7 +301,7 @@ export function Skills({ locale }: SkillsProps) {
     }
   }, [isClient, setupMarquee])
 
-  // Handle tab visibility
+  // Pause when tab hidden
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
@@ -282,7 +316,6 @@ export function Skills({ locale }: SkillsProps) {
       document.removeEventListener("visibilitychange", handleVisibilityChange)
   }, [])
 
-  // Labels
   const labels = {
     title: {
       en: "MY SKILLS",
@@ -295,30 +328,6 @@ export function Skills({ locale }: SkillsProps) {
       ar: "التقنيات والأدوات التي أستخدمها لتحويل الأفكار إلى واقع",
       de: "Technologien und Tools, die ich verwende, um Ideen zum Leben zu erwecken",
       fr: "Technologies et outils que j'utilise pour donner vie aux idées",
-    },
-    technologies: {
-      en: "Technologies",
-      ar: "تقنية",
-      de: "Technologien",
-      fr: "Technologies",
-    },
-    yearsExperience: {
-      en: "Years Experience",
-      ar: "سنوات خبرة",
-      de: "Jahre Erfahrung",
-      fr: "Années d'expérience",
-    },
-    projects: {
-      en: "Projects",
-      ar: "مشروع",
-      de: "Projekte",
-      fr: "Projets",
-    },
-    commitment: {
-      en: "Commitment %",
-      ar: "الالتزام %",
-      de: "Engagement %",
-      fr: "Engagement %",
     },
   }
 
@@ -356,20 +365,29 @@ export function Skills({ locale }: SkillsProps) {
     skills: Skill[]
     rowRef: React.RefObject<HTMLDivElement | null>
   }) => {
-    const duplicatedSkills = [...skills, ...skills]
+    // 4 copies = solid buffer, no chance of empty space
+    const repeatedSkills = [
+      ...skills,
+      ...skills,
+      ...skills,
+      ...skills,
+    ]
 
     return (
       <div
         ref={rowRef}
         data-animate="row"
+        // dir="ltr" forces marquee to behave LTR even inside Arabic page
+        // This is critical for predictable measurements
+        dir="ltr"
         className="relative overflow-hidden py-3"
       >
-        {/* Gradient masks */}
+        {/* Edge gradient masks */}
         <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
         <div className="marquee-content flex gap-4 w-max will-change-transform">
-          {duplicatedSkills.map((skill, index) => (
+          {repeatedSkills.map((skill, index) => (
             <SkillBadge key={`${skill.name}-${index}`} skill={skill} />
           ))}
         </div>
