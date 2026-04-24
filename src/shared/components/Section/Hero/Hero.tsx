@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Container } from "@/shared/components/shared/Container/Container"
 import { SocialLinks } from "@/shared/components/shared/SocialLinks/SocialLinks"
 import { siteConfig } from "@/shared/config/site"
+import { useGsapTimeline } from "@/shared/hooks/useGsap"
 
 export function Hero() {
   const t = useTranslations("hero")
@@ -16,7 +17,44 @@ export function Hero() {
   const ctaRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  
+  useGsapTimeline(containerRef, (tl) => {
+    tl.to(".hero-greeting", {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: "power3.out",
+    })
+      .to(
+        titleRef.current!,
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+        "-=0.3"
+      )
+      .to(
+        ".hero-title-role",
+        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+        "-=0.4"
+      )
+      .to(
+        subtitleRef.current!,
+        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+        "-=0.3"
+      )
+      .to(
+        ctaRef.current!,
+        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+        "-=0.3"
+      )
+      .to(
+        ".hero-social",
+        { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" },
+        "-=0.2"
+      )
+      .to(
+        scrollRef.current!,
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+        "-=0.2"
+      )
+  })
 
   return (
     <section
@@ -35,31 +73,29 @@ export function Hero() {
 
       <Container className="relative z-10">
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-          {/* Greeting - starts hidden via CSS (.hero-greeting { opacity: 0 }) */}
-          <span className="hero-greeting inline-block px-4 py-2 mb-6 text-sm font-medium text-emerald-500 bg-emerald-500/10 rounded-full border border-emerald-500/20 translate-y-[30px]">
+          {/* Greeting */}
+          <span className="hero-greeting inline-block px-4 py-2 mb-6 text-sm font-medium text-emerald-500 bg-emerald-500/10 rounded-full border border-emerald-500/20 opacity-0 translate-y-[30px]">
             {t("greeting")}
           </span>
 
-          {/* Name - starts hidden via data attribute */}
+          {/* Name */}
           <h1
             ref={titleRef}
-            data-gsap-fade-up
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4 opacity-0 translate-y-[50px]"
           >
             {t("name")}
-            
+            <span className="text-emerald-500">.</span>
           </h1>
 
-          {/* Role - starts hidden via CSS (.hero-title-role { opacity: 0 }) */}
-          <h2 className="hero-title-role text-2xl sm:text-3xl md:text-4xl font-semibold text-muted-foreground mb-6 translate-y-[30px]">
+          {/* Role */}
+          <h2 className="hero-title-role text-2xl sm:text-3xl md:text-4xl font-semibold text-muted-foreground mb-6 opacity-0 translate-y-[30px]">
             {t("title")}
           </h2>
 
           {/* Subtitle */}
           <p
             ref={subtitleRef}
-            data-gsap-fade-up
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 px-4"
+            className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 px-4 opacity-0 translate-y-[30px]"
           >
             {t("subtitle")}
           </p>
@@ -67,8 +103,7 @@ export function Hero() {
           {/* CTA Buttons */}
           <div
             ref={ctaRef}
-            data-gsap-fade-up
-            className="flex flex-wrap items-center justify-center gap-4 mb-12"
+            className="flex flex-wrap items-center justify-center gap-4 mb-12 opacity-0 translate-y-[30px]"
           >
             <Button size="lg" className="gap-2" asChild>
               <a href="#projects">
@@ -90,15 +125,23 @@ export function Hero() {
             </Button>
           </div>
 
-          {/* Social Links - starts hidden via CSS */}
-          <div className="hero-social -translate-x-5">
+          {/* Social Links */}
+          <div className="hero-social opacity-0 -translate-x-5">
             <SocialLinks />
           </div>
         </div>
       </Container>
 
       {/* Scroll Indicator */}
-      
+      <div
+        ref={scrollRef}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground opacity-0 -translate-y-5"
+      >
+        <span className="text-sm">{t("scroll")}</span>
+        <div className="w-6 h-10 border-2 border-muted-foreground/50 rounded-full flex justify-center p-2">
+          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" />
+        </div>
+      </div>
     </section>
   )
 }

@@ -10,37 +10,39 @@ import { useGsapAnimation } from "@/shared/hooks/useGsap"
 const experienceData = [
   {
     id: "1",
-    company: "Beetleware Company in Saudi-Arabia",
-    companyAr: " في السعودية beetleware شركة ",
-    position: "Junior Frontend Developer InternShip",
-    positionAr: "تدريب  واجهات أمامية ",
+    // ✅ Fixed: "Saudi Arabia" proper name
+    company: "Beetleware Company in Saudi Arabia",
+    companyAr: "شركة Beetleware في السعودية",
+    position: "Junior Frontend Developer Internship",
+    positionAr: "تدريب واجهات أمامية",
     startDate: "2025",
     endDate: "24/3/2026",
     description: [
-      "part of the frontend development team of 3 developers",
+      "Part of the frontend development team of 3 developers",
       "Implemented new features using React and Next.js",
       "Improved application performance by 40%",
     ],
     descriptionAr: [
-      "جزء فريق التطوير الواجهات الأمامية المكون من 5 مطورين",
+      "جزء من فريق تطوير الواجهات الأمامية المكون من 5 مطورين",
       "تنفيذ ميزات جديدة باستخدام React و Next.js",
       "تحسين أداء التطبيق بنسبة 40%",
     ],
+    // ✅ Fixed: "Zustand" not "noval state"
     technologies: [
       "React",
       "Next.js",
       "TypeScript",
-      "redux",
-      "noval state",
+      "Redux",
+      "Zustand",
       "Shadcn/UI",
-      "Next Auth",
+      "NextAuth",
       "Chart.js",
     ],
   },
   {
     id: "2",
-    company: "Digital Agency for freelancing",
-    companyAr: " وكالة رقميةللاعمال الحرة",
+    company: "Digital Agency for Freelancing",
+    companyAr: "وكالة رقمية للأعمال الحرة",
     position: "Frontend Developer",
     positionAr: "مطور واجهات أمامية",
     startDate: "2023",
@@ -54,20 +56,21 @@ const experienceData = [
       "تطوير تطبيقات ويب متجاوبة",
       "التعاون مع المصممين لتنفيذ تصميمات UI/UX",
       "صيانة وتحسين قواعد الكود الحالية",
-      " التعامل مع الواجهات الخلفية وال API ",
+      "التعامل مع الواجهات الخلفية وال API",
     ],
+    // ✅ Fixed: "Material UI" not "Metrial/UI"
     technologies: [
-      "NEXT.JS",
+      "Next.js",
       "React",
       "TypeScript",
       "JavaScript",
-      "Tailwind css",
+      "Tailwind CSS",
       "Sass",
-      "Metrial/UI",
+      "Material UI",
       "Shadcn/UI",
       "Chart.js",
-      "Next Auth",
-      "ISR , SSG , SSR",
+      "NextAuth",
+      "ISR, SSG, SSR",
     ],
   },
 ]
@@ -81,22 +84,18 @@ export function Experience() {
   useGsapAnimation(
     sectionRef,
     [
-      // Timeline line - draws from top to bottom
+      // Timeline line draws top to bottom
       {
         target: "[data-timeline-line]",
         from: { scaleY: 0, transformOrigin: "top" },
-        to: {
-          scaleY: 1,
-          duration: 1.5,
-          ease: "power2.out",
-        },
+        to: { scaleY: 1, duration: 1.5, ease: "power2.out" },
         scrollTrigger: {
           trigger: "[data-timeline-line]",
           start: "top 85%",
           toggleActions: "play none none reverse",
         },
       },
-      // Timeline dots - pop in
+      // Timeline dots pop in
       {
         target: "[data-timeline-dot]",
         from: { scale: 0, opacity: 0 },
@@ -113,15 +112,10 @@ export function Experience() {
           toggleActions: "play none none reverse",
         },
       },
-      // Experience cards - slide from sides + scale
+      // Experience cards
       {
         target: "[data-experience]",
-        from: {
-          opacity: 0,
-          y: 50,
-          scale: 0.95,
-          filter: "blur(10px)",
-        },
+        from: { opacity: 0, y: 50, scale: 0.95, filter: "blur(10px)" },
         to: {
           opacity: 1,
           y: 0,
@@ -137,7 +131,7 @@ export function Experience() {
           toggleActions: "play none none reverse",
         },
       },
-      // Company name + position
+      // Header slide-in
       {
         target: "[data-exp-header]",
         from: { opacity: 0, x: isArabic ? 30 : -30 },
@@ -155,7 +149,7 @@ export function Experience() {
           toggleActions: "play none none reverse",
         },
       },
-      // Description bullets - slide in one by one
+      // Bullets stagger
       {
         target: "[data-exp-bullet]",
         from: { opacity: 0, x: isArabic ? 20 : -20 },
@@ -173,7 +167,7 @@ export function Experience() {
           toggleActions: "play none none reverse",
         },
       },
-      // Tech badges - pop in stagger
+      // Tech badges pop
       {
         target: "[data-exp-tech]",
         from: { opacity: 0, scale: 0.5, y: 10 },
@@ -203,49 +197,50 @@ export function Experience() {
       className="py-20 md:py-32 bg-muted/30 overflow-hidden"
     >
       <Container>
-        <PageHeader
-          title={t("title")}
-          subtitle={t("subtitle")}
-          locale={locale}
-        />
+        <PageHeader title={t("title")} subtitle={t("subtitle")} locale={locale} />
 
         <div data-experience-list className="relative max-w-3xl mx-auto">
+          {/* Timeline line - thinner padding on mobile */}
           <div
             data-timeline-line
-            className="absolute top-0 bottom-0 left-0 md:left-1/2 w-px bg-gradient-to-b from-emerald-500 via-emerald-500/50 to-transparent md:-translate-x-1/2"
+            className="absolute top-0 bottom-0 left-4 md:left-1/2 w-px bg-gradient-to-b from-emerald-500 via-emerald-500/50 to-transparent md:-translate-x-1/2"
           />
 
           {experienceData.map((exp, index) => (
             <div
               key={exp.id}
               data-experience
-              className={`relative flex flex-col md:flex-row gap-8 mb-12 last:mb-0 ${
+              className={`relative flex flex-col md:flex-row gap-4 md:gap-8 mb-8 md:mb-12 last:mb-0 ${
                 index % 2 === 0 ? "md:flex-row-reverse" : ""
               }`}
             >
+              {/* Dot - smaller and aligned on mobile */}
               <div
                 data-timeline-dot
-                className="absolute left-0 md:left-1/2 w-4 h-4 bg-emerald-500 rounded-full border-4 border-background md:-translate-x-1/2 z-10 shadow-lg shadow-emerald-500/50"
+                className="absolute left-4 md:left-1/2 w-3 h-3 md:w-4 md:h-4 bg-emerald-500 rounded-full border-4 border-background -translate-x-1/2 md:-translate-x-1/2 z-10 shadow-lg shadow-emerald-500/50"
+                style={{ top: "1.5rem" }}
               />
 
+              {/* Card - reduced left padding on mobile */}
               <div
-                className={`flex-1 ml-8 md:ml-0 ${
+                className={`flex-1 pl-10 md:pl-0 ${
                   index % 2 === 0 ? "md:pr-12" : "md:pl-12"
                 }`}
               >
-                <div className="p-6 bg-card rounded-2xl border border-border hover:border-emerald-500/50 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300">
+                <div className="p-4 md:p-6 bg-card rounded-2xl border border-border hover:border-emerald-500/50 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300">
+                  {/* Header stacks on mobile */}
                   <div
                     data-exp-header
-                    className="flex flex-wrap items-center gap-3 mb-4"
+                    className="flex flex-col md:flex-wrap md:flex-row md:items-center gap-2 md:gap-3 mb-3 md:mb-4"
                   >
                     <div className="flex items-center gap-2 text-emerald-500">
-                      <Building2 className="h-4 w-4" />
-                      <span className="font-medium">
+                      <Building2 className="h-4 w-4 shrink-0" />
+                      <span className="font-medium text-sm md:text-base">
                         {isArabic ? exp.companyAr : exp.company}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                      <Calendar className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
+                      <Calendar className="h-4 w-4 shrink-0" />
                       <span>
                         {exp.startDate} - {exp.endDate || t("present")}
                       </span>
@@ -254,7 +249,7 @@ export function Experience() {
 
                   <h3
                     data-exp-header
-                    className="text-xl font-semibold text-foreground mb-3"
+                    className="text-lg md:text-xl font-semibold text-foreground mb-3"
                   >
                     {isArabic ? exp.positionAr : exp.position}
                   </h3>
@@ -265,9 +260,9 @@ export function Experience() {
                         <li
                           key={i}
                           data-exp-bullet
-                          className="flex items-start gap-2 text-sm text-muted-foreground"
+                          className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground"
                         >
-                          <span className="w-1.5 h-1.5 mt-2 bg-emerald-500 rounded-full shrink-0" />
+                          <span className="w-1.5 h-1.5 mt-1.5 md:mt-2 bg-emerald-500 rounded-full shrink-0" />
                           {item}
                         </li>
                       )

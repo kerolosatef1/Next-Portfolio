@@ -32,7 +32,6 @@ export function About() {
   useGsapAnimation(
     sectionRef,
     [
-      // Description text - fade up with blur removal
       {
         target: "[data-about-description]",
         from: { opacity: 0, y: 40, filter: "blur(8px)" },
@@ -49,7 +48,6 @@ export function About() {
           toggleActions: "play none none reverse",
         },
       },
-      // Tech badges - staggered scale + fade
       {
         target: "[data-tech-badge]",
         from: { opacity: 0, scale: 0.5, y: 20 },
@@ -67,19 +65,12 @@ export function About() {
           toggleActions: "play none none reverse",
         },
       },
-      // Stats cards - flip + fade with bigger movement
       {
         target: "[data-stat]",
-        from: {
-          opacity: 0,
-          y: 60,
-          rotateX: -30,
-          scale: 0.8,
-        },
+        from: { opacity: 0, y: 60, scale: 0.8 },
         to: {
           opacity: 1,
           y: 0,
-          rotateX: 0,
           scale: 1,
           duration: 0.8,
           stagger: 0.15,
@@ -91,7 +82,6 @@ export function About() {
           toggleActions: "play none none reverse",
         },
       },
-      // Stat numbers - count up animation
       {
         target: "[data-stat-number]",
         from: { textContent: 0, opacity: 0 },
@@ -111,7 +101,6 @@ export function About() {
           toggleActions: "play none none reverse",
         },
       },
-      // Stat icons - pop in
       {
         target: "[data-stat-icon]",
         from: { scale: 0, rotate: -180 },
@@ -140,11 +129,7 @@ export function About() {
       className="py-20 md:py-32 overflow-hidden"
     >
       <Container>
-        <PageHeader
-          title={t("title")}
-          subtitle={t("subtitle")}
-          locale={locale}
-        />
+        <PageHeader title={t("title")} subtitle={t("subtitle")} locale={locale} />
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="space-y-6">
@@ -172,17 +157,12 @@ export function About() {
             </div>
           </div>
 
-          <div
-            data-stats
-            className="grid grid-cols-2 gap-4"
-            style={{ perspective: "1000px" }}
-          >
+          <div data-stats className="grid grid-cols-2 gap-4">
             {stats.map((stat) => (
               <div
                 key={stat.key}
                 data-stat
                 className="group p-6 bg-card rounded-2xl border border-border hover:border-emerald-500/50 hover:-translate-y-2 transition-all duration-300 text-center hover:shadow-2xl hover:shadow-emerald-500/10"
-                style={{ transformStyle: "preserve-3d" }}
               >
                 <div
                   data-stat-icon

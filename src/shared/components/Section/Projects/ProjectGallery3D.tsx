@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useMemo } from "react"
 import Image, { StaticImageData } from "next/image"
 import { Project } from "@/data/projects"
 
-// Static data - outside component to avoid recreation
+// Static data - outside component
 const FLOATING_POSITIONS = [
   { left: "5%", top: "10%", rotate: -15, size: 80, delay: 0 },
   { left: "85%", top: "15%", rotate: 12, size: 100, delay: 0.5 },
@@ -58,7 +58,7 @@ export function ProjectGallery3D({
     return () => window.removeEventListener("resize", updateSize)
   }, [])
 
-  // Animation with IntersectionObserver - stops when not visible (saves battery)
+  // Animation with IntersectionObserver
   useEffect(() => {
     if (!cubeRef.current || !containerRef.current) return
 
@@ -81,7 +81,6 @@ export function ProjectGallery3D({
       animationRef.current = requestAnimationFrame(animate)
     }
 
-    // IntersectionObserver - pause animation when off screen
     const observer = new IntersectionObserver(
       ([entry]) => {
         isVisibleRef.current = entry.isIntersecting
@@ -116,14 +115,12 @@ export function ProjectGallery3D({
       })
     })
 
-    // Shuffle using seeded Fisher-Yates
     const shuffled = [...allImages]
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(((Math.sin(i * 9999) + 1) / 2) * (i + 1))
       ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
     }
 
-    // Exactly 54 images (6 faces × 9 grid slots)
     const result: typeof allImages = []
     for (let i = 0; i < 54; i++) {
       result.push(shuffled[i % shuffled.length])
@@ -132,7 +129,6 @@ export function ProjectGallery3D({
     return result
   }, [allProjects])
 
-  // Render a single cube face with 3x3 image grid
   const renderFace = (faceIndex: number, transform: string) => {
     const startIndex = faceIndex * 9
     const faceImages = shuffledImages.slice(startIndex, startIndex + 9)
@@ -189,9 +185,8 @@ export function ProjectGallery3D({
                   alt=""
                   fill
                   style={{ objectFit: "cover" }}
-                  sizes="(max-width: 640px) 60px, (max-width: 1024px) 100px, 130px"
-                  quality={40}
-                  loading="lazy"
+                  sizes="(max-width: 640px) 80px, (max-width: 1024px) 110px, 140px"
+                  quality={60}
                 />
               </div>
             )
@@ -201,7 +196,6 @@ export function ProjectGallery3D({
     )
   }
 
-  // 6 faces
   const faces = [
     { transform: `translateZ(${cubeSize.translate}px)` },
     { transform: `rotateY(180deg) translateZ(${cubeSize.translate}px)` },
@@ -211,7 +205,6 @@ export function ProjectGallery3D({
     { transform: `rotateX(-90deg) translateZ(${cubeSize.translate}px)` },
   ]
 
-  // Floating images
   const floatingImages = useMemo(() => {
     return FLOATING_POSITIONS.map((pos, index) => ({
       ...pos,
@@ -252,7 +245,7 @@ export function ProjectGallery3D({
                 transform: `rotate(${item.rotate}deg)`,
                 animation: `float ${8 + index}s ease-in-out infinite`,
                 animationDelay: `${item.delay}s`,
-                opacity: hasActive ? (isActive ? 0.6 : 0.1) : 0.3,
+                opacity: hasActive ? (isActive ? 0.7 : 0.15) : 0.4,
                 filter:
                   hasActive && !isActive ? "grayscale(50%) blur(1px)" : "none",
                 borderRadius: "8px",
@@ -269,8 +262,7 @@ export function ProjectGallery3D({
                 fill
                 style={{ objectFit: "cover" }}
                 sizes="100px"
-                quality={30}
-                loading="lazy"
+                quality={60}
               />
             </div>
           )
@@ -354,9 +346,7 @@ export function ProjectGallery3D({
 
       {/* Project Info */}
       {activeProject && (
-        <div
-          className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8 md:bottom-12 md:left-12 lg:bottom-16 lg:left-16 z-20"
-        >
+        <div className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8 md:bottom-12 md:left-12 lg:bottom-16 lg:left-16 z-20">
           <p className="text-muted-foreground text-sm">
             N{activeProject.id.padStart(3, "0")} / Coll. {activeProject.year}
           </p>

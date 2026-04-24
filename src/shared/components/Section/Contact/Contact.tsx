@@ -14,14 +14,13 @@ import { cn } from "@/lib/utils"
 import { PageHeader } from "../../shared/PageHeader/PageHeader"
 import { useGsapAnimation } from "@/shared/hooks/useGsap"
 
+type FormState = "idle" | "loading" | "success" | "error"
+
 export function Contact() {
   const t = useTranslations("contact")
   const locale = useLocale()
   const sectionRef = useRef<HTMLDivElement>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [formState, setFormState] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle")
+  const [formState, setFormState] = useState<FormState>("idle")
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,6 +28,7 @@ export function Contact() {
   })
 
   const isArabic = locale === "ar"
+  const isLoading = formState === "loading"
 
   useGsapAnimation(
     sectionRef,
@@ -75,13 +75,11 @@ export function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormState("loading")
-    setIsLoading(true)
 
+    // TODO: Replace with actual email service (EmailJS, Resend, etc.)
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    console.log(formData)
     setFormState("success")
-    setIsLoading(false)
     setFormData({ name: "", email: "", message: "" })
 
     setTimeout(() => setFormState("idle"), 3000)
@@ -178,11 +176,7 @@ export function Contact() {
   return (
     <section id="contact" ref={sectionRef} className="py-20 md:py-32">
       <Container>
-        <PageHeader
-          title={t("title")}
-          subtitle={t("subtitle")}
-          locale={locale}
-        />
+        <PageHeader title={t("title")} subtitle={t("subtitle")} locale={locale} />
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 max-w-5xl mx-auto">
           {/* Info */}

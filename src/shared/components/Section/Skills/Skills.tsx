@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { PageLayout } from "@/shared/components/shared/PageLayout/PageLayout"
 import { PageHeader } from "@/shared/components/shared/PageHeader/PageHeader"
 import { cn } from "@/lib/utils"
-
 import {
   SiJavascript,
   SiTypescript,
@@ -54,6 +53,9 @@ interface Skill {
   icon: IconType
   color: string
 }
+
+// Typed cleanup for tween
+type TweenWithCleanup = gsap.core.Tween & { _cleanup?: () => void }
 
 const skillsRow1: Skill[] = [
   { name: "JavaScript", icon: SiJavascript, color: "#f7df1e" },
@@ -105,7 +107,7 @@ export function Skills({ locale }: SkillsProps) {
   const row1Ref = useRef<HTMLDivElement>(null)
   const row2Ref = useRef<HTMLDivElement>(null)
   const row3Ref = useRef<HTMLDivElement>(null)
-  const tweensRef = useRef<gsap.core.Tween[]>([])
+  const tweensRef = useRef<TweenWithCleanup[]>([])
   const [isClient, setIsClient] = useState(false)
 
   const isArabic = locale === "ar"
@@ -120,7 +122,7 @@ export function Skills({ locale }: SkillsProps) {
       direction: "left" | "right",
       speed: number,
       copies: number = 4
-    ): gsap.core.Tween | null => {
+    ): TweenWithCleanup | null => {
       if (!element) return null
 
       const content = element.querySelector(".marquee-content") as HTMLElement
@@ -163,7 +165,7 @@ export function Skills({ locale }: SkillsProps) {
         modifiers: {
           x: (x) => `${wrap(parseFloat(x))}px`,
         },
-      })
+      }) as TweenWithCleanup
 
       const pause = () =>
         gsap.to(tween, { timeScale: 0, duration: 0.4, ease: "power2.out" })
@@ -172,7 +174,8 @@ export function Skills({ locale }: SkillsProps) {
 
       element.addEventListener("mouseenter", pause)
       element.addEventListener("mouseleave", resume)
-      ;(tween as any)._cleanup = () => {
+
+      tween._cleanup = () => {
         element.removeEventListener("mouseenter", pause)
         element.removeEventListener("mouseleave", resume)
       }
@@ -182,13 +185,12 @@ export function Skills({ locale }: SkillsProps) {
     [isArabic]
   )
 
-  // Rich scroll-triggered entrance animations
+  // Scroll-triggered entrance
   useEffect(() => {
     if (!isClient || !containerRef.current) return
 
     const rafId = requestAnimationFrame(() => {
       const ctx = gsap.context(() => {
-        // Each row slides in from alternating directions with blur
         gsap.utils
           .toArray<HTMLElement>("[data-skill-row]")
           .forEach((row, i) => {
@@ -229,15 +231,13 @@ export function Skills({ locale }: SkillsProps) {
   useEffect(() => {
     if (!isClient) return
 
-    let timer: NodeJS.Timeout
-    let resizeTimer: NodeJS.Timeout
+    let timer: ReturnType<typeof setTimeout>
+    let resizeTimer: ReturnType<typeof setTimeout>
 
     const initMarquees = () => {
       tweensRef.current.forEach((tween) => {
-        if (tween) {
-          ;(tween as any)._cleanup?.()
-          tween.kill()
-        }
+        tween._cleanup?.()
+        tween.kill()
       })
       tweensRef.current = []
 
@@ -270,15 +270,14 @@ export function Skills({ locale }: SkillsProps) {
       clearTimeout(resizeTimer)
       window.removeEventListener("resize", handleResize)
       tweensRef.current.forEach((tween) => {
-        if (tween) {
-          ;(tween as any)._cleanup?.()
-          tween.kill()
-        }
+        tween._cleanup?.()
+        tween.kill()
       })
       tweensRef.current = []
     }
   }, [isClient, setupMarquee])
 
+  // Pause when tab hidden
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
@@ -303,8 +302,8 @@ export function Skills({ locale }: SkillsProps) {
     subtitle: {
       en: "Technologies and tools I use to bring ideas to life",
       ar: "التقنيات والأدوات التي أستخدمها لتحويل الأفكار إلى واقع",
-      de: "Technologien und Tools, die ich verwende, um Ideen zum Leben zu erwecken",
-      fr: "Technologies et outils que j'utilise pour donner vie aux idées",
+      de: "Technologien und Tools, die ich verwende",
+      fr: "Technologies et outils que j'utilise",
     },
   }
 
@@ -328,9 +327,7 @@ export function Skills({ locale }: SkillsProps) {
           className="w-5 h-5 flex-shrink-0"
           style={{ color: skill.color || undefined }}
         />
-        <span className="text-sm font-medium text-foreground">
-          {skill.name}
-        </span>
+        <span className="text-sm font-medium text-foreground">{skill.name}</span>
       </div>
     )
   }
