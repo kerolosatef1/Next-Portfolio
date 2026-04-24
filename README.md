@@ -159,38 +159,9 @@ public/
 └── images/
 ```
 
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Node.js** >= 18.17
-- **npm** >= 9 or **yarn** >= 1.22
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/kerolosatef1/Next-Portfolio.git
-
-# Navigate to the project
-cd Next-Portfolio
-
-# Install dependencies
-npm install
 
 # Start the development server
 npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) — the middleware will redirect to `/en` automatically.
-
-### Build for Production
-
-```bash
-npm run build
-npm start
 ```
 
 ---
@@ -206,29 +177,6 @@ The portfolio supports **4 languages** with full content translation:
 | Deutsch (German) | `de` | LTR | Geist Sans |
 | Français (French) | `fr` | LTR | Geist Sans |
 
-**How it works:**
-
-- `next-intl` middleware detects the user's preferred locale and redirects accordingly
-- All routes are prefixed with the locale: `/en/projects`, `/ar/projects`, etc.
-- Translation files are in `messages/{locale}.json`
-- RTL layout is automatically applied for Arabic via `dir="rtl"` on `<html>`
-- Project data (`data/projects.ts`) includes localized titles, descriptions, and categories
-
----
-
-## 📄 Sections
-
-| Section | Description |
-|---|---|
-| **Hero** | Animated entrance with name, role, CTA buttons, and social links |
-| **About** | Brief bio with tech stack badges and stats (experience, projects) |
-| **Skills** | 3-row infinite marquee showcasing 30+ technologies with hover pause |
-| **Projects** | Interactive 3D cube gallery with project cards, filters, and detail pages |
-| **Experience** | Timeline layout with company info, roles, and tech tags |
-| **Certificates** | Professional certificates and achievements |
-| **Contact** | Contact form, email, WhatsApp, location, and social media links |
-
----
 
 ## ⚡ Performance
 
@@ -244,15 +192,6 @@ Optimizations implemented:
 - **Static generation** — `generateStaticParams` pre-renders all locale routes
 
 ---
-
-## 🚢 Deployment
-
-The portfolio is deployed on **Vercel** with automatic deployments from the `main` branch.
-
-```bash
-# Deploy to Vercel
-npx vercel --prod
-```
 
 ### Environment Variables
 
