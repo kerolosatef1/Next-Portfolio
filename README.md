@@ -270,7 +270,7 @@ NEXT_PUBLIC_CONTACT_API=your_api_endpoint
 
 - **Portfolio:** [kerolos-atef-next-portfolio.vercel.app](https://kerolos-atef-next-portfolio.vercel.app)
 - **GitHub:** [@kerolosatef1](https://github.com/kerolosatef1)
-- **LinkedIn:** [Kerolos Atef](https://linkedin.com/in/kerolosatef)
+- **LinkedIn:** [Kerolos Atef](https://linkedin.com/in/faragello)
 - **Email:** kerolosatef@example.com
 
 ---
