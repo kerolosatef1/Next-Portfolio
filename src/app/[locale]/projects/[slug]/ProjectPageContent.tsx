@@ -4,7 +4,14 @@ import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, ExternalLink, Github, Calendar, Layers, ZoomIn } from "lucide-react"
+import {
+  ArrowLeft,
+  ExternalLink,
+  Github,
+  Calendar,
+  Layers,
+  ZoomIn,
+} from "lucide-react"
 import { Project, getLocalizedProject } from "@/data/projects"
 import { Container } from "@/shared/components/shared/Container/Container"
 import { Button } from "@/components/ui/button"
@@ -16,7 +23,10 @@ interface ProjectPageContentProps {
   locale: string
 }
 
-export function ProjectPageContent({ project, locale }: ProjectPageContentProps) {
+export function ProjectPageContent({
+  project,
+  locale,
+}: ProjectPageContentProps) {
   const localizedProject = getLocalizedProject(project, locale)
 
   const pageRef = useRef<HTMLDivElement>(null)
@@ -31,7 +41,6 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isClient, setIsClient] = useState(false)
 
-  // Translations object
   const labels: Record<string, Record<string, string>> = {
     en: {
       backToProjects: "Back to Projects",
@@ -79,45 +88,72 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
   }
 
   const closeLightbox = () => setLightboxOpen(false)
-  const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % project.images.length)
-  const previousImage = () => setCurrentImageIndex((prev) => (prev - 1 + project.images.length) % project.images.length)
+  const nextImage = () =>
+    setCurrentImageIndex((prev) => (prev + 1) % project.images.length)
+  const previousImage = () =>
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + project.images.length) % project.images.length
+    )
 
-  // Set isClient to true after mount
   useEffect(() => {
     setIsClient(true)
   }, [])
 
-  // GSAP Animation
   useEffect(() => {
-    if (!isClient) return
+    if (!isClient || !pageRef.current) return
 
     const timer = setTimeout(() => {
       const ctx = gsap.context(() => {
-        const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 0.8 } })
-
-        // Set initial states
-        gsap.set([headerRef.current, titleRef.current, descriptionRef.current, buttonsRef.current], {
-          opacity: 0,
-          y: 30,
+        const tl = gsap.timeline({
+          defaults: { ease: "power3.out", duration: 0.8 },
         })
 
+        gsap.set(
+          [
+            headerRef.current,
+            titleRef.current,
+            descriptionRef.current,
+            buttonsRef.current,
+          ],
+          { opacity: 0, y: 30 }
+        )
+
         if (galleryRef.current?.children) {
-          gsap.set(galleryRef.current.children, { opacity: 0, y: 50, scale: 0.95 })
+          gsap.set(galleryRef.current.children, {
+            opacity: 0,
+            y: 50,
+            scale: 0.95,
+          })
         }
 
         gsap.set(contentRef.current, { opacity: 0, y: 40 })
 
-        // Animation timeline
         tl.to(headerRef.current, { opacity: 1, y: 0, duration: 0.6 })
           .to(titleRef.current, { opacity: 1, y: 0, duration: 0.8 }, "-=0.4")
-          .to(descriptionRef.current, { opacity: 1, y: 0, duration: 0.6 }, "-=0.5")
-          .to(buttonsRef.current, { opacity: 1, y: 0, duration: 0.6 }, "-=0.4")
+          .to(
+            descriptionRef.current,
+            { opacity: 1, y: 0, duration: 0.6 },
+            "-=0.5"
+          )
+          .to(
+            buttonsRef.current,
+            { opacity: 1, y: 0, duration: 0.6 },
+            "-=0.4"
+          )
 
         if (galleryRef.current?.children) {
-          tl.to(galleryRef.current.children, { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.15 }, "-=0.3")
+          tl.to(
+            galleryRef.current.children,
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.15 },
+            "-=0.3"
+          )
         }
 
-        tl.to(contentRef.current, { opacity: 1, y: 0, duration: 0.6 }, "-=0.5")
+        tl.to(
+          contentRef.current,
+          { opacity: 1, y: 0, duration: 0.6 },
+          "-=0.5"
+        )
       }, pageRef)
 
       return () => ctx.revert()
@@ -126,7 +162,6 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
     return () => clearTimeout(timer)
   }, [isClient])
 
-  // Technology colors
   const techColors = [
     "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30",
     "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/30",
@@ -135,6 +170,11 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
     "bg-pink-50 text-pink-700 border-pink-200 hover:bg-pink-100 dark:bg-pink-500/10 dark:text-pink-400 dark:border-pink-500/30",
     "bg-cyan-50 text-cyan-700 border-cyan-200 hover:bg-cyan-100 dark:bg-cyan-500/10 dark:text-cyan-400 dark:border-cyan-500/30",
   ]
+
+  // Filter out empty tech strings
+  const validTechnologies = project.technologies.filter(
+    (tech) => tech && tech.trim() !== ""
+  )
 
   return (
     <div ref={pageRef} className="min-h-screen bg-background overflow-hidden pt-20">
@@ -153,7 +193,10 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
             </Link>
 
             <div className="flex flex-wrap items-center gap-4 mb-6">
-              <Badge variant="outline" className="text-emerald-500 border-emerald-500/50 bg-emerald-500/10">
+              <Badge
+                variant="outline"
+                className="text-emerald-500 border-emerald-500/50 bg-emerald-500/10"
+              >
                 {localizedProject.category}
               </Badge>
               <div className="flex items-center gap-2 text-muted-foreground text-sm">
@@ -162,7 +205,9 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
               </div>
               <div className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Layers className="h-4 w-4" />
-                <span>{project.technologies.length} {t.technologies}</span>
+                <span>
+                  {validTechnologies.length} {t.technologies}
+                </span>
               </div>
             </div>
           </div>
@@ -184,15 +229,19 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
             {localizedProject.description}
           </p>
 
-          {/* Action buttons */}
+          {/* Actions */}
           <div ref={buttonsRef} className="flex flex-wrap gap-4 mb-16">
             {project.liveUrl && (
               <Button
                 size="lg"
-                className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 transition-all hover:shadow-emerald-500/40 hover:-translate-y-0.5"
+                className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 transition-all"
                 asChild
               >
-                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <ExternalLink className="h-4 w-4" />
                   {t.liveDemo}
                 </a>
@@ -202,10 +251,14 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
               <Button
                 size="lg"
                 variant="outline"
-                className="gap-2 border-border hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all hover:-translate-y-0.5"
+                className="gap-2 border-border hover:border-emerald-500/50 hover:bg-emerald-500/5 hover:-translate-y-0.5 transition-all"
                 asChild
               >
-                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Github className="h-4 w-4" />
                   {t.sourceCode}
                 </a>
@@ -213,8 +266,11 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
             )}
           </div>
 
-          {/* Images gallery */}
-          <div ref={galleryRef} className="grid sm:grid-cols-2 gap-4 md:gap-6 mb-16">
+          {/* Gallery */}
+          <div
+            ref={galleryRef}
+            className="grid sm:grid-cols-2 gap-4 md:gap-6 mb-16"
+          >
             {project.images.map((image, index) => (
               <div
                 key={index}
@@ -223,10 +279,12 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
               >
                 <Image
                   src={image}
-                  alt={`${localizedProject.title} screenshot ${index + 1}`}
+                  alt={`${localizedProject.title} - screenshot ${index + 1}`}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   sizes="(max-width: 640px) 100vw, 50vw"
+                  quality={70}
+                  loading={index < 2 ? "eager" : "lazy"}
                   placeholder={typeof image !== "string" ? "blur" : "empty"}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
@@ -241,7 +299,7 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
             ))}
           </div>
 
-          {/* About section */}
+          {/* About */}
           <div ref={contentRef} className="max-w-4xl mb-16">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
               <span className="w-8 h-1 bg-emerald-500 rounded-full" />
@@ -252,30 +310,29 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
             </div>
           </div>
 
-          {/* Technologies with varied colors */}
-          {isClient && project.technologies && project.technologies.length > 0 && (
+          {/* Technologies */}
+          {isClient && validTechnologies.length > 0 && (
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
                 <span className="w-8 h-1 bg-emerald-500 rounded-full" />
                 {t.techUsed}
               </h2>
               <div className="flex flex-wrap gap-3">
-                {project.technologies
-                  .filter((tech) => tech && tech.trim() !== "")
-                  .map((tech, index) => {
-                    const colorClass = techColors[index % techColors.length]
-                    return (
-                      <Badge
-                        key={`${tech}-${index}`}
-                        className={`tech-badge px-4 py-2 text-sm border font-medium transition-all duration-300 cursor-default ${colorClass}`}
-                      >
-                        {tech}
-                      </Badge>
-                    )
-                  })}
+                {validTechnologies.map((tech, index) => {
+                  const colorClass = techColors[index % techColors.length]
+                  return (
+                    <Badge
+                      key={`${tech}-${index}`}
+                      className={`px-4 py-2 text-sm border font-medium transition-all duration-300 cursor-default ${colorClass}`}
+                    >
+                      {tech}
+                    </Badge>
+                  )
+                })}
               </div>
             </div>
           )}
+
           <div className="mt-20 pt-10 border-t border-border/50">
             <Link
               href={`/${locale}/#projects`}
@@ -288,7 +345,6 @@ export function ProjectPageContent({ project, locale }: ProjectPageContentProps)
         </Container>
       </main>
 
-      {/* Image Lightbox */}
       <ImageLightbox
         images={project.images}
         currentIndex={currentImageIndex}

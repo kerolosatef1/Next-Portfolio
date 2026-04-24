@@ -24,12 +24,23 @@ export function ProjectList({
   const animationRef = useRef<number | null>(null)
   const scrollPosRef = useRef<number>(0)
   const isPausedRef = useRef<boolean>(false)
+  const isVisibleRef = useRef<boolean>(true)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!listRef.current) return
+    if (!listRef.current || !containerRef.current) return
+
+    // Pause animation when off-screen
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting
+      },
+      { threshold: 0.1 }
+    )
+    observer.observe(containerRef.current)
 
     const scroll = () => {
-      if (!isPausedRef.current && listRef.current) {
+      if (!isPausedRef.current && isVisibleRef.current && listRef.current) {
         scrollPosRef.current += 0.5
 
         const listHeight = listRef.current.scrollHeight / 3
@@ -45,9 +56,8 @@ export function ProjectList({
     animationRef.current = requestAnimationFrame(scroll)
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
+      if (animationRef.current) cancelAnimationFrame(animationRef.current)
+      observer.disconnect()
     }
   }, [])
 
@@ -68,6 +78,7 @@ export function ProjectList({
 
   return (
     <div
+      ref={containerRef}
       className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden relative"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -78,13 +89,17 @@ export function ProjectList({
       <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-24 md:h-32 bg-gradient-to-t from-background via-background/80 to-transparent z-10 pointer-events-none" />
 
       {/* Scrolling list */}
-      <div ref={listRef} className="pt-16 sm:pt-24 md:pt-32 pb-16 sm:pb-24 md:pb-32">
+      <div
+        ref={listRef}
+        className="pt-16 sm:pt-24 md:pt-32 pb-16 sm:pb-24 md:pb-32"
+      >
         {tripleProjects.map((project, index) => (
           <button
             key={`${project.id}-${index}`}
             className={cn(
-              "block w-full text-right py-1.5 sm:py-2 px-2 sm:px-4 transition-all duration-300",
+              "block w-full py-1.5 sm:py-2 px-2 sm:px-4 transition-all duration-300",
               "hover:text-emerald-500 active:text-emerald-400",
+              isArabic ? "text-left" : "text-right",
               activeProject?.id === project.id
                 ? "text-emerald-500 font-medium"
                 : "text-muted-foreground"
