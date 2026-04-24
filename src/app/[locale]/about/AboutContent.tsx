@@ -1,37 +1,51 @@
-"use client"
+"use client";
 
-import { useEffect, useRef, useState } from "react"
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { PageLayout } from "@/shared/components/shared/PageLayout/PageLayout"
-import { PageHeader } from "@/shared/components/shared/PageHeader/PageHeader"
-import { aboutData, getLocalizedBio, getLocalizedHighlight } from "@/data/about"
-import { siteConfig } from "@/shared/config/site"
-import { Briefcase, FolderGit2, Users, Cpu, Quote, MapPin, Mail, Check } from "lucide-react"
-import { cn } from "@/lib/utils"
-
-gsap.registerPlugin(ScrollTrigger)
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { PageLayout } from "@/shared/components/shared/PageLayout/PageLayout";
+import { PageHeader } from "@/shared/components/shared/PageHeader/PageHeader";
+import {
+  aboutData,
+  getLocalizedBio,
+  getLocalizedHighlight,
+} from "@/data/about";
+import { siteConfig } from "@/shared/config/site";
+import {
+  Briefcase,
+  FolderGit2,
+  Users,
+  Cpu,
+  Quote,
+  MapPin,
+  Mail,
+  Check,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import profileImage from "@/shared/components/shared/Images/profile.jpg";
+import Image from "next/image";
+gsap.registerPlugin(ScrollTrigger);
 
 interface AboutContentProps {
-  locale: string
+  locale: string;
 }
 
 export function AboutContent({ locale }: AboutContentProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const imageRef = useRef<HTMLDivElement>(null)
-  const bioRef = useRef<HTMLDivElement>(null)
-  const statsRef = useRef<HTMLDivElement[]>([])
-  const highlightsRef = useRef<HTMLDivElement[]>([])
-  const [isClient, setIsClient] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const bioRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement[]>([]);
+  const highlightsRef = useRef<HTMLDivElement[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
-  const isArabic = locale === "ar"
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  const isArabic = locale === "ar";
 
   useEffect(() => {
-    if (!isClient || !containerRef.current) return
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient || !containerRef.current) return;
 
     const ctx = gsap.context(() => {
       // Image animation with 3D effect
@@ -55,8 +69,8 @@ export function AboutContent({ locale }: AboutContentProps) {
               trigger: imageRef.current,
               start: "top 85%",
             },
-          }
-        )
+          },
+        );
       }
 
       // Bio text animation
@@ -76,11 +90,11 @@ export function AboutContent({ locale }: AboutContentProps) {
               trigger: bioRef.current,
               start: "top 80%",
             },
-          }
-        )
+          },
+        );
 
         // Quote icon animation
-        const quoteIcon = bioRef.current.querySelector(".quote-icon")
+        const quoteIcon = bioRef.current.querySelector(".quote-icon");
         if (quoteIcon) {
           gsap.fromTo(
             quoteIcon,
@@ -94,14 +108,14 @@ export function AboutContent({ locale }: AboutContentProps) {
                 trigger: bioRef.current,
                 start: "top 80%",
               },
-            }
-          )
+            },
+          );
         }
       }
 
       // Stats counter animation
       statsRef.current.forEach((stat, index) => {
-        if (!stat) return
+        if (!stat) return;
 
         gsap.fromTo(
           stat,
@@ -121,15 +135,17 @@ export function AboutContent({ locale }: AboutContentProps) {
               trigger: stat,
               start: "top 90%",
             },
-          }
-        )
+          },
+        );
 
         // Animate the number counting
-        const numberEl = stat.querySelector(".stat-number") as HTMLElement
+        const numberEl = stat.querySelector(".stat-number") as HTMLElement;
         if (numberEl) {
-          const finalValue = parseInt(numberEl.getAttribute("data-value") || "0")
-          const counter = { val: 0 }
-          
+          const finalValue = parseInt(
+            numberEl.getAttribute("data-value") || "0",
+          );
+          const counter = { val: 0 };
+
           gsap.to(counter, {
             val: finalValue,
             duration: 2,
@@ -139,23 +155,23 @@ export function AboutContent({ locale }: AboutContentProps) {
               start: "top 90%",
             },
             onUpdate: () => {
-              numberEl.textContent = Math.floor(counter.val) + "+"
+              numberEl.textContent = Math.floor(counter.val) + "+";
             },
-          })
+          });
         }
-      })
+      });
 
       // Highlights cards animation
       highlightsRef.current.forEach((highlight, index) => {
-        if (!highlight) return
+        if (!highlight) return;
 
         const directions = [
           { x: isArabic ? 50 : -50, y: -50 },
           { x: isArabic ? -50 : 50, y: -50 },
           { x: isArabic ? 50 : -50, y: 50 },
           { x: isArabic ? -50 : 50, y: 50 },
-        ]
-        const dir = directions[index % directions.length]
+        ];
+        const dir = directions[index % directions.length];
 
         gsap.fromTo(
           highlight,
@@ -177,11 +193,11 @@ export function AboutContent({ locale }: AboutContentProps) {
               trigger: highlight,
               start: "top 90%",
             },
-          }
-        )
+          },
+        );
 
         // Check icon animation
-        const checkIcon = highlight.querySelector(".check-icon")
+        const checkIcon = highlight.querySelector(".check-icon");
         if (checkIcon) {
           gsap.fromTo(
             checkIcon,
@@ -196,13 +212,13 @@ export function AboutContent({ locale }: AboutContentProps) {
                 trigger: highlight,
                 start: "top 90%",
               },
-            }
-          )
+            },
+          );
         }
-      })
+      });
 
       // Info items stagger
-      const infoItems = containerRef.current?.querySelectorAll(".info-item")
+      const infoItems = containerRef.current?.querySelectorAll(".info-item");
       if (infoItems && infoItems.length > 0) {
         gsap.fromTo(
           infoItems,
@@ -220,13 +236,13 @@ export function AboutContent({ locale }: AboutContentProps) {
               trigger: infoItems[0],
               start: "top 85%",
             },
-          }
-        )
+          },
+        );
       }
-    }, containerRef)
+    }, containerRef);
 
-    return () => ctx.revert()
-  }, [isClient, isArabic])
+    return () => ctx.revert();
+  }, [isClient, isArabic]);
 
   const labels = {
     title: isArabic ? "نبذة عني" : "ABOUT ME",
@@ -242,10 +258,10 @@ export function AboutContent({ locale }: AboutContentProps) {
     available: isArabic ? "متاح للعمل" : "Available for work",
     notAvailable: isArabic ? "غير متاح" : "Not available",
     highlights: isArabic ? "ما يميزني" : "What Makes Me Different",
-  }
+  };
 
-  const bio = getLocalizedBio(locale)
-  const stats = aboutData.stats
+  const bio = getLocalizedBio(locale);
+  const stats = aboutData.stats;
 
   const statItems = [
     {
@@ -268,20 +284,24 @@ export function AboutContent({ locale }: AboutContentProps) {
       value: stats.technologies,
       label: isArabic ? "تقنية" : "Technologies",
     },
-  ]
+  ];
 
   const setStatRef = (index: number) => (el: HTMLDivElement | null) => {
-    if (el) statsRef.current[index] = el
-  }
+    if (el) statsRef.current[index] = el;
+  };
 
   const setHighlightRef = (index: number) => (el: HTMLDivElement | null) => {
-    if (el) highlightsRef.current[index] = el
-  }
+    if (el) highlightsRef.current[index] = el;
+  };
 
   return (
     <PageLayout>
       <div ref={containerRef}>
-        <PageHeader title={labels.title} subtitle={labels.subtitle} locale={locale} />
+        <PageHeader
+          title={labels.title}
+          subtitle={labels.subtitle}
+          locale={locale}
+        />
 
         {/* Main Content */}
         <div className="grid lg:grid-cols-2 gap-12 items-start mb-20">
@@ -300,12 +320,14 @@ export function AboutContent({ locale }: AboutContentProps) {
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-emerald-500/5" />
 
-                {/* Placeholder - استبدله بصورتك */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-[150px] font-black text-emerald-500/20">
-                    {siteConfig.creator.name.charAt(0)}
-                  </span>
-                </div>
+                <Image
+                  src={profileImage}
+                  alt={siteConfig.creator.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 400px"
+                  priority
+                />
 
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
@@ -313,10 +335,14 @@ export function AboutContent({ locale }: AboutContentProps) {
                 {/* Floating Badge */}
                 <div className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl bg-black/50 backdrop-blur-sm border border-white/10">
                   <p className="text-white font-semibold">
-                    {isArabic ? siteConfig.creator.nameAr : siteConfig.creator.name}
+                    {isArabic
+                      ? siteConfig.creator.nameAr
+                      : siteConfig.creator.name}
                   </p>
                   <p className="text-emerald-400 text-sm">
-                    {isArabic ? siteConfig.creator.titleAr : siteConfig.creator.title}
+                    {isArabic
+                      ? siteConfig.creator.titleAr
+                      : siteConfig.creator.title}
                   </p>
                 </div>
               </div>
@@ -331,37 +357,55 @@ export function AboutContent({ locale }: AboutContentProps) {
 
               <ul className="space-y-4">
                 <li className="info-item flex items-center gap-4 p-3 rounded-xl hover:bg-secondary/50 transition-colors">
-                  <span className="text-emerald-500 font-medium min-w-[80px]">{labels.name}:</span>
+                  <span className="text-emerald-500 font-medium min-w-[80px]">
+                    {labels.name}:
+                  </span>
                   <span className="text-foreground">
-                    {isArabic ? siteConfig.creator.nameAr : siteConfig.creator.name}
+                    {isArabic
+                      ? siteConfig.creator.nameAr
+                      : siteConfig.creator.name}
                   </span>
                 </li>
                 <li className="info-item flex items-center gap-4 p-3 rounded-xl hover:bg-secondary/50 transition-colors">
-                  <span className="text-emerald-500 font-medium min-w-[80px]">{labels.title2}:</span>
+                  <span className="text-emerald-500 font-medium min-w-[80px]">
+                    {labels.title2}:
+                  </span>
                   <span className="text-foreground">
-                    {isArabic ? siteConfig.creator.titleAr : siteConfig.creator.title}
+                    {isArabic
+                      ? siteConfig.creator.titleAr
+                      : siteConfig.creator.title}
                   </span>
                 </li>
                 <li className="info-item flex items-center gap-4 p-3 rounded-xl hover:bg-secondary/50 transition-colors">
                   <MapPin className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                  <span className="text-emerald-500 font-medium min-w-[60px]">{labels.location}:</span>
+                  <span className="text-emerald-500 font-medium min-w-[60px]">
+                    {labels.location}:
+                  </span>
                   <span className="text-foreground">
-                    {isArabic ? siteConfig.creator.locationAr : siteConfig.creator.location}
+                    {isArabic
+                      ? siteConfig.creator.locationAr
+                      : siteConfig.creator.location}
                   </span>
                 </li>
                 <li className="info-item flex items-center gap-4 p-3 rounded-xl hover:bg-secondary/50 transition-colors">
                   <Mail className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                  <span className="text-emerald-500 font-medium min-w-[60px]">{labels.email}:</span>
-                  <span className="text-foreground break-all">{siteConfig.creator.email}</span>
+                  <span className="text-emerald-500 font-medium min-w-[60px]">
+                    {labels.email}:
+                  </span>
+                  <span className="text-foreground break-all">
+                    {siteConfig.creator.email}
+                  </span>
                 </li>
                 <li className="info-item flex items-center gap-4 p-3 rounded-xl hover:bg-secondary/50 transition-colors">
-                  <span className="text-emerald-500 font-medium min-w-[80px]">{labels.status}:</span>
+                  <span className="text-emerald-500 font-medium min-w-[80px]">
+                    {labels.status}:
+                  </span>
                   <span
                     className={cn(
                       "px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2",
                       siteConfig.creator.availableForWork
                         ? "bg-emerald-500/20 text-emerald-500"
-                        : "bg-red-500/20 text-red-500"
+                        : "bg-red-500/20 text-red-500",
                     )}
                   >
                     {siteConfig.creator.availableForWork && (
@@ -370,7 +414,9 @@ export function AboutContent({ locale }: AboutContentProps) {
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                       </span>
                     )}
-                    {siteConfig.creator.availableForWork ? labels.available : labels.notAvailable}
+                    {siteConfig.creator.availableForWork
+                      ? labels.available
+                      : labels.notAvailable}
                   </span>
                 </li>
               </ul>
@@ -381,16 +427,18 @@ export function AboutContent({ locale }: AboutContentProps) {
           <div className="space-y-8">
             {/* Bio */}
             <div ref={bioRef} className="relative">
-              <Quote 
+              <Quote
                 className={cn(
                   "quote-icon absolute -top-6 w-16 h-16 text-emerald-500/20",
-                  isArabic ? "-right-2" : "-left-2"
-                )} 
+                  isArabic ? "-right-2" : "-left-2",
+                )}
               />
-              <div 
+              <div
                 className={cn(
                   "text-lg text-muted-foreground leading-relaxed whitespace-pre-line",
-                  isArabic ? "pr-6 border-r-2 border-emerald-500/30" : "pl-6 border-l-2 border-emerald-500/30"
+                  isArabic
+                    ? "pr-6 border-r-2 border-emerald-500/30"
+                    : "pl-6 border-l-2 border-emerald-500/30",
                 )}
               >
                 {bio}
@@ -406,7 +454,7 @@ export function AboutContent({ locale }: AboutContentProps) {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 {aboutData.highlights.map((highlight, index) => {
-                  const localized = getLocalizedHighlight(highlight, locale)
+                  const localized = getLocalizedHighlight(highlight, locale);
                   return (
                     <div
                       key={index}
@@ -421,11 +469,13 @@ export function AboutContent({ locale }: AboutContentProps) {
                           <h4 className="font-semibold text-foreground mb-1 group-hover:text-emerald-500 transition-colors">
                             {localized.title}
                           </h4>
-                          <p className="text-sm text-muted-foreground">{localized.description}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {localized.description}
+                          </p>
                         </div>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -458,5 +508,5 @@ export function AboutContent({ locale }: AboutContentProps) {
         </div>
       </div>
     </PageLayout>
-  )
+  );
 }
